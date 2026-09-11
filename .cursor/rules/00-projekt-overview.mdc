@@ -1,0 +1,26 @@
+---
+description: Przegląd projektu, mapa dokumentacji i zasada języka
+alwaysApply: true
+---
+
+# Base Defense Roguelite — kontekst projektu
+
+Kooperacyjny roguelite local co-op (1–4 graczy) z obroną bazy na trzech liniach.
+Silnik: Unity 6+. MVP = 10 fal, 2 bossów, pełna grywalna pętla.
+
+## Język
+- Nazwy systemowe, designowe i dokumentacja: **po polsku**.
+- Techniczne nazwy w kodzie (klasy, metody) mogą być po angielsku.
+
+## Dokumentacja = source of truth
+Zawsze weryfikuj decyzje względem `docs/`:
+- Wizja/zasady/pętla/zakres: `docs/00_GAME_VISION.md`, `docs/01_DESIGN_PRINCIPLES.md`,
+  `docs/02_CORE_LOOP.md`, `docs/03_MVP_SCOPE.md`
+- Produkcja: `docs/production/` (AGENT_WORKFLOW, MILESTONES, MVP_BACKLOG, DEFINITION_OF_DONE, TEST_STRATEGY)
+- Technika: `docs/technical/` (ARCHITECTURE, UNITY_CONVENTIONS, INPUT_AND_CONTROLLERS, UI_UX, GAME_FEEL, ART_DIRECTION)
+- Systemy: `docs/systems/`  • Content: `docs/content/`  • Balans: `docs/balance/`
+
+## Zasady nadrzędne
+- MVP to szkielet, nie encyklopedia contentu — nie rozszerzaj zakresu ponad `03_MVP_SCOPE.md`.
+- Tożsamość postaci: kit umiejętności + talenty, nie loot ekwipunku.
+- Dane contentowe (umiejętności, talenty, moby) mają być data-driven, nie hardkodowane.

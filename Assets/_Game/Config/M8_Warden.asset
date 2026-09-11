@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e5f6a7b8c94102b3c4d5e6f7089012, type: 3}
+  m_Name: M8_Warden
+  m_EditorClassIdentifier: 
+  bossId: warden
+  displayName: Warden
+  maxHealth: 700
+  bodyScale: {x: 2.4, y: 2.4, z: 2.4}
+  bodyColor: {r: 0.15, g: 0.35, b: 0.32, a: 1}
+  slamDamage: 16
+  slamRadius: 4
+  slamTelegraph: 1.1
+  slamInterval: 3.4
+  slamIntervalFrenzy: 2
+  totemHpRatio: 0.7
+  totemMaxHealth: 45
+  damageTakenWhileTotemsAlive: 0.25
+  towerDisableHpRatio: 0.4
+  siegeSummonCount: 2
+  siegeEnemyDefinition: {fileID: 11400000, guid: a7b8c9d0e1f241638495a6b7c8d9e0f5, type: 2}
+  frenzyHpRatio: 0.2
+  zoneTelegraph: 0.6
+  zoneRadius: 3.5
+  zoneDuration: 3.5
+  zoneTickDamage: 8
+  zoneTickInterval: 0.5
+  zoneInterval: 5

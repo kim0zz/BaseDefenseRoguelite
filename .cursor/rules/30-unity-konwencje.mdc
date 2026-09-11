@@ -1,0 +1,18 @@
+---
+description: Konwencje kodu Unity dla projektu
+globs: Assets/**/*.cs
+alwaysApply: false
+---
+
+# Konwencje Unity
+
+- Unity 6+, nowy Input System, wspólna kamera.
+- Komponenty o małej odpowiedzialności; każdy system ma jasne API i ownership.
+- Dane balansowe/contentowe poza logiką wykonawczą (ScriptableObject lub równoważne).
+- Bez singleton-spaghetti bez uzasadnienia.
+- Nazwy techniczne mogą być po angielsku; nazwy designowe po polsku.
+- Nie hardkoduj wartości konfiguracyjnych.
+- Brak dużych refaktorów przekrojowych bez zgody Lead/Planner.
+- Każdy feature musi mieć testowalny Definition of Done.
+
+Szczegóły: `docs/technical/UNITY_CONVENTIONS.md`, `docs/technical/ARCHITECTURE.md`.

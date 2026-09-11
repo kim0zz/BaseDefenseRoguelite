@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04ca658c4c6c46c194b274b28950b656, type: 3}
+  m_Name: M4_Hunter
+  m_EditorClassIdentifier: 
+  enemyKind: 1
+  displayName: Hunter
+  maxHealth: 14
+  damage: 6
+  attackInterval: 1.2
+  moveSpeed: 5.5
+  attackRange: 1.5
+  detectRange: 35
+  bodyScale: {x: 0.7, y: 1.05, z: 0.7}
+  bodyColor: {r: 0.45, g: 0.2, b: 0.65, a: 1}

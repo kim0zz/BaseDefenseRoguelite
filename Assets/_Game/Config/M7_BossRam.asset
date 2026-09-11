@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7d0ef1a2c3d4e5f6a7b8c9d0e1f2a3b, type: 3}
+  m_Name: M7_BossRam
+  m_EditorClassIdentifier: 
+  bossId: the_ram
+  displayName: The Ram
+  maxHealth: 300
+  moveSpeed: 7
+  chargeSpeed: 14
+  telegraphSeconds: 1.8
+  telegraphSecondsEnraged: 1
+  recoverSeconds: 1.4
+  structureImpactDamage: 27
+  shockwaveDamage: 6
+  shockwaveRadius: 4
+  focusPlayerDamage: 5
+  focusAttackInterval: 2.2
+  focusDuration: 3.5
+  focusDurationEnraged: 2.2
+  focusContactGap: 0.55
+  playerBodyRadius: 0.5
+  staggerInterruptThreshold: 35
+  burstInterruptThreshold: 60
+  burstInterruptWindow: 2
+  interruptStunSeconds: 1.2
+  enrageHealthRatio: 0.5
+  chargeCooldown: 6
+  chargeCooldownEnraged: 3.5
+  bodyColor: {r: 0.55, g: 0.2, b: 0.65, a: 1}
+  bodyScale: {x: 2.2, y: 2.2, z: 2.2}

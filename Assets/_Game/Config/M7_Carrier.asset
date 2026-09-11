@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04ca658c4c6c46c194b274b28950b656, type: 3}
+  m_Name: M7_Carrier
+  m_EditorClassIdentifier: 
+  enemyKind: 3
+  displayName: Carrier
+  maxHealth: 20
+  damage: 7
+  attackInterval: 1.5
+  moveSpeed: 4
+  attackRange: 1.6
+  detectRange: 28
+  bodyScale: {x: 0.9, y: 0.9, z: 0.9}
+  bodyColor: {r: 0.95, g: 0.85, b: 0.2, a: 1}
+  expReward: 12
+  goldReward: 18
+  structureDamage: 0
+  playerDamageMultiplier: 1

@@ -1,0 +1,29 @@
+---
+description: Role agentów i pętla pracy multi-agentowej
+alwaysApply: true
+---
+
+# Workflow multi-agentowy
+
+Pętla: **plan → implementacja → weryfikacja → playtest → feedback → iteracja**.
+
+## Role i modele (pełne opisy w .cursor/agents/*.md)
+- **Lead** (`cursor-grok-4.6-high-fast`) — planuje, rozbija na taski, deleguje, pilnuje architektury, eskaluje niejasności.
+- **Implementer** (`composer-2.5-fast`) — realizuje wyłącznie powierzony zakres, nie rozszerza go, aktualizuje testy.
+- **Verifier** (`composer-2.5-fast`) — niezależnie sprawdza acceptance criteria, regresję i Unity Console; zakłada, że kod może być błędny. **Nie** Sonnet.
+- **Balance Agent** (`claude-opus-5-thinking-high`) — analizuje liczby i synergie, flaguje outliery; NIE zmienia designu FROZEN. **Nie używać w M0–M5** bez jawnego polecenia PO.
+
+## Standardowa pętla M0–M5
+**Lead → Implementer → Verifier** (Balance Agent poza standardowym loopem).
+Balance Agent uruchamiaj **wyłącznie**: na jawne polecenie PO/użytkownika lub od M6+ (analiza buildów, talentów, broni, TTK, DPS, ekonomia).
+
+## Zasady eskalacji modeli
+- Implementer (`composer-2.5-fast`) **nie może** samodzielnie eskalować zadania do droższego modelu.
+- Po **jednej nieudanej rundzie poprawek** Implementer zgłasza potrzebę eskalacji — decyzja należy do PO/Leada.
+- Verifier i Implementer: `composer-2.5-fast`. Nie podmieniać Verifiera na Sonnet ani na wersję bez fast.
+
+## Zasady współpracy
+- Poziom autonomii: niski/średni. PO zatwierdza milestone.
+- Każdy handoff zawiera: zakres, powiązane docs, acceptance criteria, status FROZEN.
+- Nie łącz ról w jednym kroku bez potrzeby — Implementer nie „samo-weryfikuje" designu.
+- Duże refaktory przekrojowe tylko za zgodą Leada.

@@ -1,0 +1,20 @@
+---
+description: Polityka decyzji FROZEN i eskalacji do PO
+alwaysApply: true
+---
+
+# Decyzje FROZEN są nienaruszalne
+
+Dokument jest FROZEN, jeśli w nagłówku ma `## Status` = **FROZEN**.
+Aktualnie FROZEN: `00_GAME_VISION`, `01_DESIGN_PRINCIPLES`, `02_CORE_LOOP`,
+`03_MVP_SCOPE`, `production/VISUAL_FEEDBACK_CHECKLIST`, zasady w `systems/SKILLS.md`,
+pętla i struktura kart w `systems/PLAYER_PROGRESSION` (lock PO 2026-09-09).
+
+Lootowane bronie i przedmioty są **poza MVP** (`WEAPONS_AND_ITEMS` = PARKED). Nie przywracać ich bez zgody PO.
+
+## Zasady
+- NIE zmieniaj i NIE obchodź decyzji FROZEN (mechanika, zakres, pętla, warunki win/lose).
+- Jeśli zadanie wymaga naruszenia FROZEN → **zatrzymaj się i eskaluj do PO** (Product Ownera).
+  W odpowiedzi jasno oznacz: „⚠️ ESKALACJA FROZEN", wskaż dokument, sprzeczność i opcje.
+- Treści DRAFT można rozwijać, ale zmiany zachowania wymagają aktualizacji docs (patrz DoD).
+- W razie wątpliwości, czy coś jest FROZEN — traktuj jak FROZEN i pytaj.

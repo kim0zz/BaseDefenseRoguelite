@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2227598ce5124a399d0a9cfd4763f323, type: 3}
+  m_Name: M4_HeavyAxe
+  m_EditorClassIdentifier: 
+  damage: 16
+  attackInterval: 1.1
+  range: 2.2
+  arcDegrees: 100
+  maxTargets: 2

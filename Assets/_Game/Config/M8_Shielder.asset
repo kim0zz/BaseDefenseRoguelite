@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04ca658c4c6c46c194b274b28950b656, type: 3}
+  m_Name: M8_Shielder
+  m_EditorClassIdentifier: 
+  enemyKind: 7
+  displayName: Shielder
+  maxHealth: 40
+  damage: 6
+  attackInterval: 1.5
+  moveSpeed: 3.2
+  attackRange: 1.6
+  detectRange: 30
+  bodyScale: {x: 1.2, y: 1.2, z: 1.2}
+  bodyColor: {r: 0.25, g: 0.42, b: 0.78, a: 1}
+  expReward: 12
+  goldReward: 7
+  structureDamage: 0
+  playerDamageMultiplier: 1
+  supportBuffRadius: 0
+  supportMoveSpeedMultiplier: 1
+  supportDamageMultiplier: 1
+  shieldProtectRadius: 3.5

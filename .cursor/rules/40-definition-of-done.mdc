@@ -1,0 +1,19 @@
+---
+description: Definition of Done i wymogi feedbacku wizualnego
+alwaysApply: true
+---
+
+# Definition of Done
+
+Feature jest DONE, gdy: acceptance criteria przechodzą, brak blockerów i regresji
+w funkcjach krytycznych, build się uruchamia, da się przetestować ręcznie bez edycji kodu,
+brak zbędnych hardcode'ów, docs zaktualizowane przy zmianie zachowania, Verifier sprawdził,
+nie naruszono FROZEN, commit jest mały i jednozakresowy.
+
+## Funkcje widoczne w gameplayu — dodatkowo
+- podstawowy feedback wizualny lub placeholder,
+- interakcja czytelna bez konsoli/logów,
+- sprawdzony `docs/production/VISUAL_FEEDBACK_CHECKLIST.md`,
+- game feel wymaga playtestu człowieka (nie można dać PASS wyłącznie z kodu).
+
+Pełne definicje: `docs/production/DEFINITION_OF_DONE.md`.
