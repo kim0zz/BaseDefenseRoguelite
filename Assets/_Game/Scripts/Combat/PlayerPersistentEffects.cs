@@ -49,6 +49,14 @@ public class PlayerPersistentEffects : MonoBehaviour
     private readonly Queue<GameObject> _fireTrailSegments = new();
     private WaveManager _waveManager;
 
+    private float _timedOverrideTimer;
+    private GameObject _stackTarget;
+    private int _stackCount;
+    private float _stackLastHitTime;
+    private int _billiardCollisionCount;
+    private int _phoenixSpawns;
+    private float _consumeBurnIcd;
+
     private struct AuraRampState
     {
         public int ExtraTicks;
@@ -133,6 +141,9 @@ public class PlayerPersistentEffects : MonoBehaviour
 
     public float GetAttackSpeedMultiplier()
     {
+        if (TryGetAttackIntervalOverride(out _))
+            return 1f;
+
         var mul = 1f;
         if (_furyActive)
             mul *= 1f + GetTuningFloat(PersistentEffectKind.FuryMeter, 1, 0.25f);
@@ -140,6 +151,176 @@ public class PlayerPersistentEffects : MonoBehaviour
             mul *= 1f + GetTuningFloat(PersistentEffectKind.WkurwionyKolos, 0, 0.20f);
         return mul;
     }
+
+    public bool TryGetAttackIntervalOverride(out float seconds)
+    {
+        if (Has(PersistentEffectKind.PermanentAttackIntervalOverride))
+        {
+            seconds = GetTuningFloat(
+                PersistentEffectKind.PermanentAttackIntervalOverride,
+                0,
+                DeployableTuning.PermanentOverrideInterval);
+            return true;
+        }
+
+        if (_timedOverrideTimer > 0f && Has(PersistentEffectKind.TimedAttackIntervalOverride))
+        {
+            seconds = GetTuningFloat(
+                PersistentEffectKind.TimedAttackIntervalOverride,
+                0,
+                DeployableTuning.TimedOverrideInterval);
+            return true;
+        }
+
+        seconds = 0f;
+        return false;
+    }
+
+    public void NotifyUltimateActivated()
+    {
+        if (!Has(PersistentEffectKind.TimedAttackIntervalOverride)) return;
+        _timedOverrideTimer = GetTuningFloat(
+            PersistentEffectKind.TimedAttackIntervalOverride,
+            1,
+            DeployableTuning.TimedOverrideDuration);
+    }
+
+    public float GetBasicSplashRadius(float baseRadius)
+    {
+        var radius = Has(PersistentEffectKind.BasicSplashBonus)
+            ? DeployableTuning.HukSplashRadius
+            : baseRadius;
+
+        if (_timedOverrideTimer > 0f && Has(PersistentEffectKind.RapidSplashDuringOverride))
+        {
+            radius = Has(PersistentEffectKind.BasicSplashBonus)
+                ? DeployableTuning.RapidSplashWithHuk
+                : DeployableTuning.RapidSplashOverride;
+        }
+
+        return radius;
+    }
+
+    public float GetBasicDamageMultiplier()
+    {
+        return Has(PersistentEffectKind.PermanentAttackIntervalOverride)
+            ? GetTuningFloat(
+                PersistentEffectKind.PermanentAttackIntervalOverride,
+                1,
+                DeployableTuning.PermanentDamageMultiplier)
+            : 1f;
+    }
+
+    public int GetDeployableCap()
+    {
+        return Has(PersistentEffectKind.DeployableCapBonus)
+            ? DeployableTuning.CapBonusCap
+            : DeployableTuning.DefaultNormalCap;
+    }
+
+    public float GetBurnTickDamage() =>
+        GetTuningFloat(PersistentEffectKind.ApplyBurnOnPlayerDamage, 0, DeployableTuning.BurnTickDamage);
+
+    public float GetBurnTickInterval() =>
+        GetTuningFloat(PersistentEffectKind.ApplyBurnOnPlayerDamage, 1, DeployableTuning.BurnTickInterval);
+
+    public float GetBurnDuration() =>
+        GetTuningFloat(PersistentEffectKind.ApplyBurnOnPlayerDamage, 2, DeployableTuning.BurnDuration);
+
+    public float ApplyPerTargetHitMultiplier(GameObject target, float damage)
+    {
+        if (!Has(PersistentEffectKind.PerTargetHitStacks) || damage <= 0f)
+            return damage;
+
+        var now = Time.time;
+        if (now - _stackLastHitTime > DeployableTuning.StackResetTimeout)
+        {
+            _stackCount = 0;
+            _stackTarget = null;
+        }
+
+        if (target != null && _stackTarget != null && target != _stackTarget)
+        {
+            _stackCount = 0;
+            _stackTarget = target;
+        }
+        else if (target != null && _stackTarget == null)
+        {
+            _stackTarget = target;
+        }
+
+        var index = Mathf.Clamp(_stackCount, 0, DeployableTuning.StackMax - 1);
+        var mul = DeployableTuning.StackMultipliers[index];
+        _stackCount = Mathf.Min(DeployableTuning.StackMax - 1, _stackCount + 1);
+        _stackLastHitTime = now;
+        return damage * mul;
+    }
+
+    public int StackCountForTests => _stackCount;
+    public GameObject StackTargetForTests => _stackTarget;
+
+    public void ResetStacksForTests()
+    {
+        _stackCount = 0;
+        _stackTarget = null;
+        _stackLastHitTime = 0f;
+    }
+
+    public void RegisterBilliardCollision() => _billiardCollisionCount++;
+
+    public int BilliardCollisionCountForTests => _billiardCollisionCount;
+
+    public void TryConsumeBurnOnHit(GameObject target, Vector3 origin, float radius)
+    {
+        if (!Has(PersistentEffectKind.ConsumeBurnOnHit) || target == null) return;
+        if (Time.time - _consumeBurnIcd < 0.4f) return;
+
+        var status = target.GetComponentInParent<StatusEffectReceiver>();
+        if (status == null || !status.HasEffect(StatusEffectType.Burn)) return;
+
+        _consumeBurnIcd = Time.time;
+        var extraDmg = GetTuningFloat(PersistentEffectKind.ConsumeBurnOnHit, 1, 8f);
+        var extraRadius = GetTuningFloat(PersistentEffectKind.ConsumeBurnOnHit, 2, 2f);
+        if (GetTuningInt(PersistentEffectKind.ConsumeBurnOnHit, 0, 0) == 1)
+            extraRadius = radius * Mathf.Max(0.1f, extraRadius);
+        ExplosionResolver.Explode(origin, extraRadius, extraDmg, gameObject, 8, 0f, canApplyBurn: false);
+    }
+
+    public void TryPhoenixOnBurnKill(GameObject owner, Vector3 origin, int generation)
+    {
+        if (!Has(PersistentEffectKind.PhoenixOnBurnKill) || generation >= 1) return;
+        if (_phoenixSpawns >= GetTuningInt(PersistentEffectKind.PhoenixOnBurnKill, 0, 2)) return;
+
+        _phoenixSpawns++;
+        var child = Deployable.SpawnPlaceholder(
+            origin,
+            owner,
+            DeployableCategory.Child,
+            GetTuningFloat(PersistentEffectKind.PhoenixOnBurnKill, 0, 6f),
+            GetTuningFloat(PersistentEffectKind.PhoenixOnBurnKill, 1, 1.2f),
+            0f,
+            5,
+            detonatable: true,
+            generation: DeployableTuning.ClusterGeneration);
+        child.SetFuse(GetTuningFloat(PersistentEffectKind.PhoenixOnBurnKill, 2, 0.6f));
+    }
+
+    public void TrySpawnRapidScorch(Vector3 position, float splashRadius)
+    {
+        if (_timedOverrideTimer <= 0f || !Has(PersistentEffectKind.RapidSplashDuringOverride)) return;
+        var tickDmg = DeployableTuning.BurnTickDamage;
+        var tickInterval = DeployableTuning.BurnTickInterval;
+        var dps = tickInterval > 0f ? tickDmg / tickInterval : tickDmg * 2f;
+        SlowZone.Spawn(position, splashRadius, gameObject, dps, 0.6f, applySlow: false);
+    }
+
+    public void AdvanceTimedOverrideForTests(float deltaSeconds)
+    {
+        if (_timedOverrideTimer > 0f)
+            _timedOverrideTimer -= deltaSeconds;
+    }
+
+    public void SetStackLastHitTimeForTests(float time) => _stackLastHitTime = time;
 
     public float GetOutgoingDamageMultiplier()
     {
@@ -330,6 +511,13 @@ public class PlayerPersistentEffects : MonoBehaviour
         TickKolosFormMovement();
         TickPeriodicTaunt();
         TickFireTrail();
+        TickTimedOverride();
+    }
+
+    private void TickTimedOverride()
+    {
+        if (_timedOverrideTimer > 0f)
+            _timedOverrideTimer -= Time.deltaTime;
     }
 
     private void TrackMovement()

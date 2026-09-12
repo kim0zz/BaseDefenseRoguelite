@@ -38,7 +38,7 @@ public readonly struct WeaponFeelProfile
 
     public float FractionSum => WindupFraction + ActiveFraction + RecoveryFraction;
 
-    public bool IsRanged => Family == WeaponFamily.Bow;
+    public bool IsRanged => Family == WeaponFamily.Bow || Family == WeaponFamily.ThrownExplosive;
 
     public static WeaponFeelProfile For(WeaponFamily family)
     {
@@ -50,6 +50,11 @@ public readonly struct WeaponFeelProfile
                 return new WeaponFeelProfile(WeaponFamily.Axe, 0.38f, 0.10f, 0.52f, 0.25f, 0.10f, 1.80f, 0.12f, 0f);
             case WeaponFamily.Bow:
                 return new WeaponFeelProfile(WeaponFamily.Bow, 0.28f, 0.00f, 0.72f, 0.40f, 0.03f, 0.20f, 0.05f, 20f);
+            case WeaponFamily.ThrownExplosive:
+                return new WeaponFeelProfile(
+                    WeaponFamily.ThrownExplosive,
+                    0.28f, 0.00f, 0.72f, 0.40f, 0.03f, 0f, 0.05f,
+                    DeployableTuning.ThrownExplosiveSpeed);
             default:
                 return new WeaponFeelProfile(WeaponFamily.Sword, 0.18f, 0.12f, 0.70f, 0.55f, 0.04f, 0.60f, 0.04f, 0f);
         }

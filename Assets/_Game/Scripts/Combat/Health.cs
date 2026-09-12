@@ -57,6 +57,11 @@ public class Health : MonoBehaviour, IDamageable
 
     public void TakeDamage(float amount, GameObject source = null)
     {
+        TakeDamage(amount, source, DamageHitFlags.None);
+    }
+
+    public void TakeDamage(float amount, GameObject source, DamageHitFlags flags)
+    {
         if (_isDead || amount <= 0f) return;
 
         var immunity = GetComponent<DamageImmunity>();
@@ -65,8 +70,9 @@ public class Health : MonoBehaviour, IDamageable
         if (source != null)
             _lastDamageSource = source;
 
+        var isStatusTick = (flags & DamageHitFlags.StatusTick) != 0;
         var persistents = GetComponent<PlayerPersistentEffects>();
-        if (persistents != null)
+        if (persistents != null && !isStatusTick)
         {
             var processed = persistents.ProcessIncoming(amount, source);
             if (processed.Negated) return;
@@ -81,7 +87,7 @@ public class Health : MonoBehaviour, IDamageable
 
             amount = processed.FinalDamage;
         }
-        else
+        else if (!isStatusTick)
         {
             Damaged?.Invoke(amount, source);
         }

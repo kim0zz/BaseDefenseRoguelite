@@ -111,6 +111,18 @@ public class OfferGeneratorTests
     }
 
     [Test]
+    public void CombinedCatalog_PudzianLevel2StillOffersThreeMutations()
+    {
+        var catalog = BuildContentFactory.CreateDefaultCatalog();
+        var offer = catalog.BuildLevelOffer(Snapshot(2));
+        Assert.AreEqual(3, offer.Count);
+        Assert.AreEqual("pudzian_skok", offer[0].TalentId);
+        Assert.AreEqual("pudzian_zryj_mnie", offer[1].TalentId);
+        Assert.AreEqual("pudzian_spychacz", offer[2].TalentId);
+        Assert.That(Ids(offer), Does.Not.Contain("bomberman_kasetowa"));
+    }
+
+    [Test]
     public void Tags_SumFromChosenCards()
     {
         var catalog = BuildContentFactory.CreateDefaultCatalog();

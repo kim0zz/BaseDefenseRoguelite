@@ -6,5 +6,6 @@ public enum PlayerClassId
     Cwel,
     Pudzian,
     Cipak,
-    Jamie
+    Jamie,
+    Bomberman
 }

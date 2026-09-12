@@ -59,7 +59,7 @@ Plastry:
 - **M8.0** win/lose (FAIL) — **DONE** — PO playtest PASS (2026-09-11). Plan: [`M8_PLAN.md`](M8_PLAN.md) § M8.0.
 - **M8.2** Support / Flanker / Shielder — **DONE** (kod + Verifier PASS 2026-09-11; playtest PO razem z M8.3).
 - **M8.3** fale 6–10 + Warden + wygrana — kod + Verifier PASS (2026-09-11); **NEEDS PLAYTEST** PO (feel bossa). Plan: [`M8_PLAN.md`](M8_PLAN.md)
-- **M8.4–M8.6** Jamie → Cipak → Cwel (wzorzec Pudziana)
+- **M8.4** Bomberman kompletny — kod + Verifier AC 1–12 PASS / Console czysty (2026-09-11); **NEEDS PLAYTEST** PO. Plan: [`M84_BOMBERMAN_PLAN.md`](M84_BOMBERMAN_PLAN.md). Jamie / Cipak / Cwel — później (M8.4–M8.6 pierwotna kolejność).
 
 ## M8.1 — Framework progresji
 **DONE** — PO PASS (2026-09-09). [`M81_PROGRESSION_PLAN.md`](M81_PROGRESSION_PLAN.md).

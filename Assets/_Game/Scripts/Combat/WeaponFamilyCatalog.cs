@@ -15,6 +15,8 @@ public static class WeaponFamilyCatalog
                 return WeaponFamily.Axe;
             case "luk":
                 return WeaponFamily.Bow;
+            case "petarda":
+                return WeaponFamily.ThrownExplosive;
             default:
                 return WeaponFamily.Sword;
         }

@@ -194,6 +194,17 @@ public class StatusEffectReceiver : MonoBehaviour
                 }
             }
 
+            if (effect.Type == StatusEffectType.Burn && _health != null && _health.IsAlive)
+            {
+                var tickInterval = DeployableTuning.BurnTickInterval;
+                effect.TickAccumulator += deltaTime;
+                while (effect.TickAccumulator >= tickInterval)
+                {
+                    effect.TickAccumulator -= tickInterval;
+                    _health.TakeDamage(effect.Magnitude, null, DamageHitFlags.StatusTick);
+                }
+            }
+
             if (effect.Remaining <= 0f)
             {
                 _effects.RemoveAt(i);

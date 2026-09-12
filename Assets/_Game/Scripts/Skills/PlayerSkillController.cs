@@ -139,6 +139,26 @@ public class PlayerSkillController : MonoBehaviour
         if (_persistentsHost == null)
             _persistentsHost = GetComponent<PlayerPersistentEffects>();
         _persistentsHost?.ReplaceAll(_persistents);
+        SyncOrbitingHost(slots);
+    }
+
+    private void SyncOrbitingHost(SkillDefinition[] slots)
+    {
+        var ult = slots != null && SkillLoadout.UltimateSlot < slots.Length
+            ? slots[SkillLoadout.UltimateSlot]
+            : null;
+        var wantsOrbit = ult != null && ult.SkillId == "bomberman_orbitale";
+        var host = GetComponent<OrbitingDeployableHost>();
+        if (wantsOrbit)
+        {
+            if (host == null)
+                host = gameObject.AddComponent<OrbitingDeployableHost>();
+            host.EnsureStarted();
+        }
+        else if (host != null)
+        {
+            host.StopAndClear();
+        }
     }
 
     private void Awake()
@@ -303,6 +323,10 @@ public class PlayerSkillController : MonoBehaviour
             if (skill != null && skill.SkillId == "pudzian_ja_jestem_boss")
                 _persistentsHost?.ActivateKolosForm(8f);
 
+            if (skill != null && skill.ActivationMode == SkillActivationMode.Active
+                && _activeSlot == UltimateSlot)
+                _persistentsHost?.NotifyUltimateActivated();
+
             if (isCharge)
                 BeginChargeActive(skill);
             else if (isLeapStomp)
@@ -367,10 +391,17 @@ public class PlayerSkillController : MonoBehaviour
                 skill.WindupSeconds,
                 GetPlayerColor());
         }
-        else if (skill.ShapeType == SkillShapeType.ChargeLine)
+        else if (skill.ShapeType == SkillShapeType.ChargeLine
+                 || skill.ShapeType == SkillShapeType.AimStripBurst)
         {
+            var range = skill.ShapeType == SkillShapeType.AimStripBurst
+                ? DeployableTuning.AirstrikeSpacing * (skill.MaxTargets > 0 ? skill.MaxTargets : DeployableTuning.AirstrikeBurstCount)
+                : skill.ChargeRangeMeters;
+            var width = skill.ShapeType == SkillShapeType.AimStripBurst
+                ? DeployableTuning.AirstrikeStripHalfWidth * 2f
+                : skill.CapsuleWidthMeters;
             var aim = GetAimDirection();
-            if (!_telegraph.BeginChargeLine(skill.ChargeRangeMeters, skill.CapsuleWidthMeters, GetPlayerColor()))
+            if (!_telegraph.BeginChargeLine(range, width, GetPlayerColor()))
             {
                 AbortCastImmediate();
                 Debug.LogWarning("[PlayerSkillController] Charge telegraph failed — cast aborted.");
@@ -424,6 +455,46 @@ public class PlayerSkillController : MonoBehaviour
             StartCooldownIfNeeded(skill);
             RecordUseTelemetry(skill, default);
             Debug.Log($"[PlayerSkillController] {skill.DisplayName} — fale na 3 linie.");
+            return;
+        }
+
+        if (skill.ShapeType == SkillShapeType.PlaceDeployable)
+        {
+            var aim = GetAimDirection();
+            var pos = transform.position + aim * DeployableTuning.PlaceOffsetMeters;
+            DeployableRegistry.Place(gameObject, pos, skill);
+            if (_persistentsHost != null && _persistentsHost.Has(PersistentEffectKind.ArmToProximityMine))
+            {
+                var placed = DeployableRegistry.FindNearest(gameObject, pos, 0.5f);
+                placed?.Motor.BeginArming();
+            }
+            StartCooldownIfNeeded(skill);
+            RecordUseTelemetry(skill, default);
+            return;
+        }
+
+        if (skill.ShapeType == SkillShapeType.DetonateOwned)
+        {
+            DeployableRegistry.DetonateAllDetonatable(gameObject);
+            StartCooldownIfNeeded(skill);
+            RecordUseTelemetry(skill, default);
+            return;
+        }
+
+        if (skill.ShapeType == SkillShapeType.LaunchNearestOwned)
+        {
+            ResolveLaunchNearestOwned(skill);
+            StartCooldownIfNeeded(skill);
+            RecordUseTelemetry(skill, default);
+            return;
+        }
+
+        if (skill.ShapeType == SkillShapeType.AimStripBurst)
+        {
+            var aim = GetAimDirection();
+            SkillAimStripBurstExecutor.Execute(skill, gameObject, transform.position, aim, targetLayers);
+            StartCooldownIfNeeded(skill);
+            RecordUseTelemetry(skill, default);
             return;
         }
 
@@ -849,6 +920,32 @@ public class PlayerSkillController : MonoBehaviour
 
         var position = IsLeapCast(skill) ? _leapLandingPoint : transform.position;
         SkillVfxSpawner.SpawnTelegraph(skill.TelegraphPrefab, position, skill.WindupSeconds + 0.2f);
+    }
+
+    private void ResolveLaunchNearestOwned(SkillDefinition skill)
+    {
+        var aim = GetAimDirection();
+        var multi = _persistentsHost != null && _persistentsHost.Has(PersistentEffectKind.MultiLaunchOwned);
+        var range = multi ? DeployableTuning.MultiLaunchPickRange : DeployableTuning.KickPickRange;
+        var cap = _persistentsHost?.GetDeployableCap() ?? DeployableTuning.DefaultNormalCap;
+        var maxCount = multi ? cap : 1;
+
+        var targets = DeployableRegistry.FindAllInRange(
+            gameObject,
+            transform.position,
+            range,
+            d => d.Category == DeployableCategory.Normal
+                || d.Category == DeployableCategory.Child
+                || d.Category == DeployableCategory.Orbital,
+            maxCount);
+
+        var host = GetComponent<OrbitingDeployableHost>();
+        foreach (var deployable in targets)
+        {
+            if (host != null && host.TryKick(deployable, aim))
+                continue;
+            deployable.Motor.Kick(aim);
+        }
     }
 
     private void SpawnImpactFeedback(SkillDefinition skill, Vector3 center)

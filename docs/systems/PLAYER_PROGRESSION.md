@@ -33,7 +33,7 @@ Wymagania karty (AND, puste pole = brak ograniczenia):
 
 ### Receptury — Pudzian (wzorzec)
 
-Inna klasa może mieć inną tabelę bez zmiany silnika.
+Inna klasa może mieć inną tabelę bez zmiany silnika (np. Bomberman L2: `AllEligibleInGroup` zamiast `OneMutationPerActive` — bez zmiany pętli FROZEN).
 
 | Poziom | Receptura | N |
 |---|---|---|

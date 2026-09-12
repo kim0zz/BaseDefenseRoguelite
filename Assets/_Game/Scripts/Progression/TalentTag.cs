@@ -20,5 +20,15 @@ public enum TalentTag
     Kolos,
     Trzesienie,
     Aura,
-    OstatniaSzansa
+    OstatniaSzansa,
+    Basic,
+    Demolition,
+    Chain,
+    Trapper,
+    Fire,
+    Seeking,
+    Physics,
+    RapidFire,
+    Orbital,
+    Airstrike
 }

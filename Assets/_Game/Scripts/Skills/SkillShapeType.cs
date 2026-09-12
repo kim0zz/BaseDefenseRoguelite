@@ -4,5 +4,9 @@ public enum SkillShapeType
     Cone,
     Leap,
     ChargeLine,
-    LaneWaves
+    LaneWaves,
+    PlaceDeployable,
+    DetonateOwned,
+    LaunchNearestOwned,
+    AimStripBurst
 }

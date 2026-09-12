@@ -5,5 +5,6 @@ public enum ForcedMovementStepHit
 {
     None,
     PlayAreaEdge,
-    Obstacle
+    Obstacle,
+    Enemy
 }

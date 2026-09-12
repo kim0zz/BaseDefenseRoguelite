@@ -447,7 +447,7 @@ public class CombatHudPlaceholder : MonoBehaviour
                 : CombatHudCopy.FormatBasicAttackPower(stats.Damage, stats.AttackInterval);
 
             var persistents = player.GetComponent<PlayerPersistentEffects>();
-            var extras = FormatPersistentHud(persistents);
+            var extras = FormatPersistentHud(player, persistents);
             var attack = player.GetComponent<PlayerAttackController>();
             var comboLabel = attack != null && attack.ComboStep > 0 ? $"  |  AA {attack.ComboStep}/3" : "";
 
@@ -540,20 +540,33 @@ public class CombatHudPlaceholder : MonoBehaviour
         GUI.color = prev;
     }
 
-    private static string FormatPersistentHud(PlayerPersistentEffects persistents)
+    private static string FormatPersistentHud(PlayerCharacter player, PlayerPersistentEffects persistents)
     {
-        if (persistents == null) return "";
         var parts = new System.Collections.Generic.List<string>();
-        if (persistents.Has(PersistentEffectKind.FuryMeter))
-            parts.Add($"Furia {persistents.FuryMeter:0}/{persistents.FuryThreshold:0}" +
-                      (persistents.FuryActive ? " <color=#ff8844>AKTYWNA</color>" : ""));
-        if (persistents.Has(PersistentEffectKind.HartStacks))
-            parts.Add($"Hart {persistents.HartStacks}/{persistents.HartMaxStacks}" +
-                      (persistents.HartReady ? " <color=#88ccff>READY</color>" : ""));
-        if (persistents.LastChanceActive)
-            parts.Add($"<color=#ff6666>OSTATNIA SZANSA</color> heal {persistents.LastChanceHealAccum:0}/{persistents.LastChanceSurviveThreshold:0}");
-        if (persistents.KolosActive)
-            parts.Add($"<color=#cc88ff>KOLOS {persistents.KolosRemaining:0.0}s</color>");
+        if (persistents != null)
+        {
+            if (persistents.Has(PersistentEffectKind.FuryMeter))
+                parts.Add($"Furia {persistents.FuryMeter:0}/{persistents.FuryThreshold:0}" +
+                          (persistents.FuryActive ? " <color=#ff8844>AKTYWNA</color>" : ""));
+            if (persistents.Has(PersistentEffectKind.HartStacks))
+                parts.Add($"Hart {persistents.HartStacks}/{persistents.HartMaxStacks}" +
+                          (persistents.HartReady ? " <color=#88ccff>READY</color>" : ""));
+            if (persistents.LastChanceActive)
+                parts.Add($"<color=#ff6666>OSTATNIA SZANSA</color> heal {persistents.LastChanceHealAccum:0}/{persistents.LastChanceSurviveThreshold:0}");
+            if (persistents.KolosActive)
+                parts.Add($"<color=#cc88ff>KOLOS {persistents.KolosRemaining:0.0}s</color>");
+            if (CombatHudCopy.TryFormatAttackIntervalOverride(persistents, out var rapidLabel))
+                parts.Add(rapidLabel);
+        }
+
+        if (player != null)
+        {
+            if (DeployableHudRead.TryGetBombLine(player.gameObject, out var bombLine))
+                parts.Add(bombLine);
+            if (DeployableHudRead.TryGetOrbitalLine(player.gameObject, out var orbitalLine))
+                parts.Add(orbitalLine);
+        }
+
         return parts.Count == 0 ? "" : "  |  " + string.Join("  ", parts);
     }
 

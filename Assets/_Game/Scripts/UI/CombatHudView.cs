@@ -374,6 +374,15 @@ public class CombatHudView : MonoBehaviour
         if (comboStep > 0)
             parts.Add($"AA {comboStep}/3");
 
+        if (CombatHudCopy.TryFormatAttackIntervalOverride(persistents, out var rapidLabel))
+            parts.Add(rapidLabel);
+
+        if (DeployableHudRead.TryGetBombLine(player.gameObject, out var bombLine))
+            parts.Add(bombLine);
+
+        if (DeployableHudRead.TryGetOrbitalLine(player.gameObject, out var orbitalLine))
+            parts.Add(orbitalLine);
+
         return string.Join("  |  ", parts);
     }
 

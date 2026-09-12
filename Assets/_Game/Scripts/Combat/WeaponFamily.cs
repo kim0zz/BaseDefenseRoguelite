@@ -6,5 +6,6 @@ public enum WeaponFamily
     Sword = 0,
     Dagger = 1,
     Axe = 2,
-    Bow = 3
+    Bow = 3,
+    ThrownExplosive = 4
 }

@@ -202,6 +202,156 @@ public static class SkillContentFactory
         return skill;
     }
 
+    public static SkillDefinition CreateBombermanBomba()
+    {
+        var skill = ScriptableObject.CreateInstance<SkillDefinition>();
+        SetField(skill, "skillId", "bomberman_bomba");
+        SetField(skill, "displayName", "Bomba");
+        SetField(skill, "ownerClass", PlayerClassId.Bomberman);
+        SetField(skill, "skillSlotIndex", 0);
+        SetField(skill, "windupSeconds", 0.12f);
+        SetField(skill, "activeSeconds", 0.08f);
+        SetField(skill, "recoverySeconds", 0.15f);
+        SetField(skill, "windupMoveMultiplier", 0.5f);
+        SetField(skill, "recoveryMoveMultiplier", 0.5f);
+        SetField(skill, "locksFacingInActive", true);
+        SetField(skill, "cooldownSeconds", 0.40f);
+        SetField(skill, "maxCharges", 1);
+        SetField(skill, "cooldownStartsOnActive", true);
+        SetField(skill, "aimMode", SkillAimMode.FacingVector);
+        SetField(skill, "locomotion", SkillLocomotionMode.Root);
+        SetField(skill, "hitPolicy", SkillHitPolicy.OnEnteredActive);
+        SetField(skill, "shapeType", SkillShapeType.PlaceDeployable);
+        SetField(skill, "radiusMeters", 2.4f);
+        SetField(skill, "maxTargets", 8);
+        SetField(skill, "damage", 16f);
+        SetField(skill, "controlMode", SkillControlMode.None);
+        SetField(skill, "knockbackForce", 0f);
+        SetField(skill, "bossStaggerContribution", 8f);
+        SetField(skill, "targetMask", SkillTargetMask.Enemy | SkillTargetMask.Elite | SkillTargetMask.Boss);
+        SetField(skill, "shakeStrength", 0.25f);
+        SetField(skill, "rumbleLow", 0.3f);
+        SetField(skill, "rumbleHigh", 0.45f);
+        return skill;
+    }
+
+    public static SkillDefinition CreateBombermanDetonator()
+    {
+        var skill = ScriptableObject.CreateInstance<SkillDefinition>();
+        SetField(skill, "skillId", "bomberman_detonator");
+        SetField(skill, "displayName", "Detonator");
+        SetField(skill, "ownerClass", PlayerClassId.Bomberman);
+        SetField(skill, "skillSlotIndex", 1);
+        SetField(skill, "windupSeconds", 0.08f);
+        SetField(skill, "activeSeconds", 0.05f);
+        SetField(skill, "recoverySeconds", 0.10f);
+        SetField(skill, "windupMoveMultiplier", 0.5f);
+        SetField(skill, "recoveryMoveMultiplier", 0.5f);
+        SetField(skill, "locksFacingInActive", true);
+        SetField(skill, "cooldownSeconds", 0.50f);
+        SetField(skill, "maxCharges", 1);
+        SetField(skill, "cooldownStartsOnActive", true);
+        SetField(skill, "aimMode", SkillAimMode.Self);
+        SetField(skill, "locomotion", SkillLocomotionMode.Root);
+        SetField(skill, "hitPolicy", SkillHitPolicy.OnEnteredActive);
+        SetField(skill, "shapeType", SkillShapeType.DetonateOwned);
+        SetField(skill, "damage", 0f);
+        SetField(skill, "controlMode", SkillControlMode.None);
+        SetField(skill, "targetMask", SkillTargetMask.Enemy | SkillTargetMask.Elite | SkillTargetMask.Boss);
+        SetField(skill, "shakeStrength", 0.2f);
+        SetField(skill, "rumbleLow", 0.25f);
+        SetField(skill, "rumbleHigh", 0.4f);
+        return skill;
+    }
+
+    public static SkillDefinition CreateBombermanKopniak()
+    {
+        var skill = ScriptableObject.CreateInstance<SkillDefinition>();
+        SetField(skill, "skillId", "bomberman_kopniak");
+        SetField(skill, "displayName", "Kopniak");
+        SetField(skill, "ownerClass", PlayerClassId.Bomberman);
+        SetField(skill, "skillSlotIndex", 2);
+        SetField(skill, "windupSeconds", 0.15f);
+        SetField(skill, "activeSeconds", 0.20f);
+        SetField(skill, "recoverySeconds", 0.25f);
+        SetField(skill, "windupMoveMultiplier", 0.5f);
+        SetField(skill, "recoveryMoveMultiplier", 0.5f);
+        SetField(skill, "locksFacingInActive", true);
+        SetField(skill, "cooldownSeconds", 4.0f);
+        SetField(skill, "maxCharges", 1);
+        SetField(skill, "cooldownStartsOnActive", true);
+        SetField(skill, "aimMode", SkillAimMode.FacingVector);
+        SetField(skill, "locomotion", SkillLocomotionMode.Root);
+        SetField(skill, "hitPolicy", SkillHitPolicy.OnEnteredActive);
+        SetField(skill, "shapeType", SkillShapeType.LaunchNearestOwned);
+        SetField(skill, "chargeSpeed", 14f);
+        SetField(skill, "chargeRangeMeters", 7f);
+        SetField(skill, "radiusMeters", 3.5f);
+        SetField(skill, "damage", 0f);
+        SetField(skill, "controlMode", SkillControlMode.None);
+        SetField(skill, "targetMask", SkillTargetMask.Enemy | SkillTargetMask.Elite | SkillTargetMask.Boss);
+        SetField(skill, "shakeStrength", 0.2f);
+        SetField(skill, "rumbleLow", 0.3f);
+        SetField(skill, "rumbleHigh", 0.45f);
+        return skill;
+    }
+
+    public static SkillDefinition CreateBombermanSzybkostrzelnosc()
+    {
+        var skill = CreateBombermanBomba();
+        SetField(skill, "skillId", "bomberman_szybkostrzelnosc");
+        SetField(skill, "displayName", "Szybkostrzelność");
+        SetField(skill, "skillSlotIndex", SkillLoadout.UltimateSlot);
+        SetField(skill, "activationMode", SkillActivationMode.Active);
+        SetField(skill, "shapeType", SkillShapeType.Circle);
+        SetField(skill, "cooldownSeconds", 28f);
+        SetField(skill, "windupSeconds", 0.15f);
+        SetField(skill, "activeSeconds", 0.2f);
+        SetField(skill, "recoverySeconds", 0.2f);
+        SetField(skill, "damage", 0f);
+        SetField(skill, "radiusMeters", 0f);
+        SetField(skill, "maxTargets", 0);
+        return skill;
+    }
+
+    public static SkillDefinition CreateBombermanOrbitale()
+    {
+        var skill = CreateBombermanBomba();
+        SetField(skill, "skillId", "bomberman_orbitale");
+        SetField(skill, "displayName", "Orbitale");
+        SetField(skill, "skillSlotIndex", SkillLoadout.UltimateSlot);
+        SetField(skill, "activationMode", SkillActivationMode.Active);
+        SetField(skill, "shapeType", SkillShapeType.Circle);
+        SetField(skill, "cooldownSeconds", 1f);
+        SetField(skill, "windupSeconds", 0.1f);
+        SetField(skill, "activeSeconds", 0.1f);
+        SetField(skill, "recoverySeconds", 0.15f);
+        SetField(skill, "damage", 0f);
+        SetField(skill, "radiusMeters", 0f);
+        SetField(skill, "maxTargets", 0);
+        return skill;
+    }
+
+    public static SkillDefinition CreateBombermanNalot()
+    {
+        var skill = CreateBombermanBomba();
+        SetField(skill, "skillId", "bomberman_nalot");
+        SetField(skill, "displayName", "Nalot");
+        SetField(skill, "skillSlotIndex", SkillLoadout.UltimateSlot);
+        SetField(skill, "activationMode", SkillActivationMode.Active);
+        SetField(skill, "shapeType", SkillShapeType.AimStripBurst);
+        SetField(skill, "cooldownSeconds", 30f);
+        SetField(skill, "windupSeconds", 1.0f);
+        SetField(skill, "activeSeconds", 1.7f);
+        SetField(skill, "recoverySeconds", 0.3f);
+        SetField(skill, "damage", 14f);
+        SetField(skill, "radiusMeters", 2.0f);
+        SetField(skill, "chargeRangeMeters", 2.2f);
+        SetField(skill, "maxTargets", 7);
+        SetField(skill, "bossStaggerContribution", 10f);
+        return skill;
+    }
+
     private static void SetField(object target, string fieldName, object value)
     {
         var field = target.GetType().GetField(fieldName,

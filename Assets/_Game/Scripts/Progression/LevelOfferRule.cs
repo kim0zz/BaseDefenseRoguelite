@@ -7,6 +7,7 @@ using UnityEngine;
 public enum OfferRecipeKind
 {
     OneMutationPerActive,
+    AllEligibleInGroup,
     MixIndependentAndFollowup,
     AllEligibleGrantUltimate,
     AllEligible

@@ -146,7 +146,10 @@ public class PlayerAttackController : MonoBehaviour
         if (tick.SpawnProjectile)
         {
             CommitAttackFacing();
-            SpawnBowProjectile();
+            if (ActiveFamily == WeaponFamily.ThrownExplosive)
+                SpawnExplosiveProjectile();
+            else
+                SpawnBowProjectile();
         }
 
         if (tick.EnteredRecovery)
@@ -210,9 +213,7 @@ public class PlayerAttackController : MonoBehaviour
     private void StartSingleAttack()
     {
         var feel = WeaponFeelProfile.For(ActiveFamily);
-        var interval = Mathf.Max(0.05f, _stats.AttackInterval);
-        if (_persistents != null)
-            interval /= _persistents.GetAttackSpeedMultiplier();
+        var interval = ResolveAttackInterval();
         if (!_cycle.TryStart(feel, interval)) return;
 
         _attackFacing = ReadAimFacing();
@@ -323,6 +324,17 @@ public class PlayerAttackController : MonoBehaviour
         status.Apply(StatusEffectType.Poison, 3f, 2f, gameObject);
     }
 
+    private float ResolveAttackInterval()
+    {
+        if (_persistents != null && _persistents.TryGetAttackIntervalOverride(out var overrideSec))
+            return Mathf.Max(0.05f, overrideSec);
+
+        var interval = Mathf.Max(0.05f, _stats.AttackInterval);
+        if (_persistents != null)
+            interval /= _persistents.GetAttackSpeedMultiplier();
+        return interval;
+    }
+
     private void SpawnBowProjectile()
     {
         var origin = transform.position + Vector3.up * 0.6f + _attackFacing * 0.4f;
@@ -335,6 +347,41 @@ public class PlayerAttackController : MonoBehaviour
             _stats.Damage,
             gameObject,
             feel);
+    }
+
+    private void SpawnExplosiveProjectile()
+    {
+        var origin = transform.position + Vector3.up * 0.6f + _attackFacing * 0.4f;
+        var feel = _cycle.Feel;
+        var profile = _weapon?.MeleeProfile;
+        var baseSplash = profile != null && profile.SplashRadius > 0f
+            ? profile.SplashRadius
+            : DeployableTuning.BasicSplashRadius;
+        var splash = _persistents != null
+            ? _persistents.GetBasicSplashRadius(baseSplash)
+            : baseSplash;
+        var damage = _stats.Damage;
+        if (_persistents != null)
+            damage *= _persistents.GetBasicDamageMultiplier();
+
+        var arcHeight = profile != null ? profile.ArcHeight : DeployableTuning.ThrownExplosiveArcPeak;
+        var maxRange = _stats.Range > 0f ? _stats.Range : DeployableTuning.ThrownExplosiveMaxRange;
+        var projectileProfile = new ProjectileProfile(
+            ProjectileImpactMode.ExplodeOnFirstHitOrObstacle,
+            splash,
+            arcHeight,
+            profile != null ? profile.MaxTargets : 5,
+            3f);
+
+        Projectile.Spawn(
+            origin,
+            _attackFacing,
+            feel.ProjectileSpeed > 0f ? feel.ProjectileSpeed : DeployableTuning.ThrownExplosiveSpeed,
+            maxRange,
+            damage,
+            gameObject,
+            feel,
+            projectileProfile);
     }
 
     private void OnBecameIdle()

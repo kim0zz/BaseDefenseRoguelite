@@ -13,6 +13,9 @@ public class MeleeWeaponDefinition : ScriptableObject
     [SerializeField] private float arcDegrees = 120f;
     [SerializeField] private int maxTargets = 3;
     [SerializeField] private AttackComboDefinition comboProfile;
+    [SerializeField] private float splashRadius;
+    [SerializeField] private float arcHeight;
+    [SerializeField] private ProjectileImpactMode impactMode = ProjectileImpactMode.Direct;
 
     public float Damage => damage;
     public float AttackInterval => attackInterval;
@@ -21,4 +24,7 @@ public class MeleeWeaponDefinition : ScriptableObject
     public int MaxTargets => maxTargets;
     public AttackComboDefinition ComboProfile => comboProfile;
     public bool HasCombo => comboProfile != null && comboProfile.HitCount > 0;
+    public float SplashRadius => splashRadius;
+    public float ArcHeight => arcHeight;
+    public ProjectileImpactMode ImpactMode => impactMode;
 }

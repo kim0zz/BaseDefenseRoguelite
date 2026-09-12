@@ -26,6 +26,14 @@ public static class ForcedMovementStepper
             return new ForcedMovementStepResult(delta, ForcedMovementStepHit.None);
         }
 
+        var enemyHit = TryDetectEnemyCollision(body, current, desired, out var enemy);
+        if (enemyHit != null)
+        {
+            body.position = enemyHit.Value;
+            var enemyMoved = enemyHit.Value - current;
+            return new ForcedMovementStepResult(enemyMoved, ForcedMovementStepHit.Enemy, enemy);
+        }
+
         if (playArea.Contains(desired))
         {
             body.position = desired;
@@ -36,6 +44,32 @@ public static class ForcedMovementStepper
         body.position = clamped;
         var moved = clamped - current;
         return new ForcedMovementStepResult(moved, ForcedMovementStepHit.PlayAreaEdge);
+    }
+
+    private static Vector3? TryDetectEnemyCollision(Transform body, Vector3 from, Vector3 to, out GameObject enemy)
+    {
+        enemy = null;
+        if (body == null) return null;
+
+        var direction = to - from;
+        var dist = direction.magnitude;
+        if (dist <= 0.001f) return null;
+
+        var hits = Physics.RaycastAll(from + Vector3.up * 0.5f, direction.normalized, dist);
+        foreach (var hit in hits)
+        {
+            if (hit.collider == null) continue;
+            if (hit.collider.transform == body || hit.collider.transform.IsChildOf(body)) continue;
+            if (hit.collider.GetComponentInParent<PlayerCharacter>() != null) continue;
+            var ec = hit.collider.GetComponentInParent<EnemyController>();
+            if (ec == null) continue;
+            var dmg = hit.collider.GetComponentInParent<IDamageable>();
+            if (dmg == null || !dmg.IsAlive) continue;
+            enemy = ec.gameObject;
+            return hit.point;
+        }
+
+        return null;
     }
 
     private static MapPlayArea ResolvePlayArea()

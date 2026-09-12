@@ -45,16 +45,26 @@ public static class BuildContentFactory
             CreateItem("iron_rosary", "Iron Rosary", LootRarity.Rare, Mod(maxHealthMultiplier: 1.15f))
         };
 
+        var petarda = CreateWeapon("petarda", "Petarda", LootRarity.Common, CreatePetardaProfile(), Mod());
+        var allWeapons = new List<WeaponDefinition>(weapons) { petarda };
+        weapons = allWeapons.ToArray();
+
         var classes = new[]
         {
             CreateClass(PlayerClassId.Jamie, "Jamie", weapons[0], weapons[6], 100f, 5f),
             CreateClass(PlayerClassId.Cwel, "Cwel", weapons[1], weapons[6], 85f, 5.8f),
             CreateClass(PlayerClassId.Pudzian, "Pudzian", weapons[3], weapons[4], 135f, 4.2f),
-            CreateClass(PlayerClassId.Cipak, "Cipak", weapons[6], weapons[1], 90f, 5.2f)
+            CreateClass(PlayerClassId.Cipak, "Cipak", weapons[6], weapons[1], 90f, 5.2f),
+            CreateBombermanClass(petarda)
         };
 
-        var talents = BuildPudzianTalents();
-        var tables = new[] { CreatePudzianProgressionTable() };
+        var pudzianTalents = BuildPudzianTalents();
+        var bombermanTalents = BuildBombermanTalents();
+        var talents = new TalentDefinition[pudzianTalents.Length + bombermanTalents.Length];
+        pudzianTalents.CopyTo(talents, 0);
+        bombermanTalents.CopyTo(talents, pudzianTalents.Length);
+
+        var tables = new[] { CreatePudzianProgressionTable(), CreateBombermanProgressionTable() };
 
         catalog.InitializeRuntime(classes, weapons, items, talents, tables);
         return catalog;
@@ -316,6 +326,260 @@ public static class BuildContentFactory
         };
     }
 
+    private static MeleeWeaponDefinition CreatePetardaProfile()
+    {
+        var profile = CreateMelee(9f, 0.70f, 8f, 0f, 5);
+        SetField(profile, "splashRadius", 1.1f);
+        SetField(profile, "arcHeight", 0.55f);
+        return profile;
+    }
+
+    private static ClassDefinition CreateBombermanClass(WeaponDefinition petarda)
+    {
+        var cls = CreateClass(PlayerClassId.Bomberman, "Bomberman", petarda, petarda, 95f, 5.3f);
+        SetField(cls, "maxHealthPerTeamLevel", 6f);
+        return cls;
+    }
+
+    private static TalentDefinition[] BuildBombermanTalents()
+    {
+        var szybkostrzelnosc = SkillContentFactory.CreateBombermanSzybkostrzelnosc();
+        var orbitale = SkillContentFactory.CreateBombermanOrbitale();
+        var nalot = SkillContentFactory.CreateBombermanNalot();
+
+        var kasetowaTuning = EffectTuning.Create(0.8f, 7f, 1.4f, 1.2f, 1.8f, i0: 3);
+        var hukTuning = EffectTuning.Create(2.2f);
+        var ogluszajacyTuning = EffectTuning.Create(1.0f, 0.5f, 0f, 8f);
+        var saperTuning = EffectTuning.Create(1.0f, 1.6f);
+        var piromanTuning = EffectTuning.Create(2f, 0.5f, 2.0f);
+        var torpedyTuning = EffectTuning.Create(8f, 0.45f, 8f, i0: 3);
+        var ladunekTuning = EffectTuning.Create(1.75f, 1.20f, 1.40f, 1.60f, i0: 4);
+        var kulaTuning = EffectTuning.Create(11f, 0.85f, 6.5f, i0: 3);
+        var rapidTuning = EffectTuning.Create(0.22f, 6f);
+        var termicznaTuning = EffectTuning.Create(0.5f, 8f, 2.0f, 0.40f, i0: 0);
+        var feniksTuning = EffectTuning.Create(6f, 1.2f, 0.60f, i0: 2, i1: 6);
+        var polowanieTuning = EffectTuning.Create(8f, 1.20f, 1.44f, i0: 3);
+        var termobarycznyTuning = EffectTuning.Create(1.0f, 8f, 1.5f, i0: 1);
+        var karabinTuning = EffectTuning.Create(0.22f, 0.45f);
+        var przelamanieTuning = EffectTuning.Create(0.45f, 22f, 2.8f);
+        var treserTuning = EffectTuning.Create(4.5f);
+        var taranTuning = EffectTuning.Create(0.40f, 3.5f, i0: 4);
+        var breakTuning = EffectTuning.Create(16f, 6f, 1.35f, i0: 6);
+        var lancuchTuning = EffectTuning.Create(0.12f, 0.15f, i0: 5);
+        var przeladowanyTuning = EffectTuning.Create(2.4f, 3.2f, 0.60f, 2f);
+        var reakcjaOrbitalnaTuning = EffectTuning.Create(1.0f);
+        var planetarnyTuning = EffectTuning.Create(3.0f, 200f, i0: 6);
+        var ostatniaBombaTuning = EffectTuning.Create(18f, 2.6f, 4f, 0.20f, i0: 8);
+        var capBonusTuning = EffectTuning.Create(i0: 10);
+
+        return new[]
+        {
+            BombermanCard("bomberman_kasetowa", "Bomba kasetowa",
+                "Wybuch głównej bomby rozrzuca trzy miniatury z krótkim lontem.",
+                2, Tags(TalentTag.Demolition, TalentTag.Aoe, TalentTag.Chain),
+                TalentRequirement.Create(),
+                TalentEffect.Persistent(PersistentEffectKind.ClusterOnExplode, OfferGenerator.GroupMutation, kasetowaTuning)),
+
+            BombermanCard("bomberman_wiekszy_huk", "Większy Huk",
+                "Petarda i wybuchy podstawowe zyskują większy promień rażenia.",
+                2, Tags(TalentTag.Basic, TalentTag.Aoe),
+                TalentRequirement.Create(),
+                TalentEffect.Persistent(PersistentEffectKind.BasicSplashBonus, OfferGenerator.GroupMutation, hukTuning)),
+
+            BombermanCard("bomberman_wybuch_ogluszajacy", "Wybuch ogłuszający",
+                "Kopnięta bomba ogłusza wrogów przy wybuchu na kontakcie.",
+                2, Tags(TalentTag.Control, TalentTag.Physics),
+                TalentRequirement.Create(),
+                TalentEffect.Persistent(PersistentEffectKind.KickExplodeStun, OfferGenerator.GroupMutation, ogluszajacyTuning)),
+
+            BombermanCard("bomberman_saper", "Saper",
+                "Postawione bomby uzbrajają się i wybuchają, gdy wróg wejdzie w zasięg.",
+                3, Tags(TalentTag.Trapper, TalentTag.Control),
+                TalentRequirement.Create(),
+                TalentEffect.Persistent(PersistentEffectKind.ArmToProximityMine, OfferGenerator.GroupCore, saperTuning)),
+
+            BombermanCard("bomberman_piroman", "Piroman",
+                "Twoje ofensywne trafienia podpalają wrogów na krótki czas.",
+                3, Tags(TalentTag.Fire),
+                TalentRequirement.Create(),
+                TalentEffect.Persistent(PersistentEffectKind.ApplyBurnOnPlayerDamage, OfferGenerator.GroupCore, piromanTuning)),
+
+            BombermanCard("bomberman_mini_torpedy", "Mini-torpedy",
+                "Miniatury z kasetowej lecą w najbliższe cele i wybuchają na kontakcie.",
+                3, Tags(TalentTag.Seeking, TalentTag.Chain, TalentTag.Aoe),
+                TalentRequirement.Create(requiresTalents: new[] { "bomberman_kasetowa" }),
+                TalentEffect.Persistent(PersistentEffectKind.ChildHoming, OfferGenerator.GroupFollowup, torpedyTuning)),
+
+            BombermanCard("bomberman_ladunek_kumulacyjny", "Ładunek kumulacyjny",
+                "Kolejne trafienia tego samego celu petardą zwiększają obrażenia.",
+                3, Tags(TalentTag.Basic, TalentTag.Demolition),
+                TalentRequirement.Create(requiresTalents: new[] { "bomberman_wiekszy_huk" }),
+                TalentEffect.Persistent(PersistentEffectKind.PerTargetHitStacks, OfferGenerator.GroupFollowup, ladunekTuning)),
+
+            BombermanCard("bomberman_kula_bilardowa", "Kula bilardowa",
+                "Kopnięta bomba odbija się od wrogów zamiast wybuchać od razu.",
+                3, Tags(TalentTag.Physics, TalentTag.Collision),
+                TalentRequirement.Create(requiresTalents: new[] { "bomberman_wybuch_ogluszajacy" }),
+                TalentEffect.Persistent(PersistentEffectKind.BilliardOnKick, OfferGenerator.GroupFollowup, kulaTuning)),
+
+            BombermanCard("bomberman_szybkostrzelnosc", "Szybkostrzelność",
+                "Aktywne ulti: przez kilka sekund petarda strzela znacznie szybciej.",
+                4, Tags(TalentTag.RapidFire, TalentTag.Basic),
+                TalentRequirement.Create(),
+                TalentEffect.Grant(szybkostrzelnosc, OfferGenerator.GroupUltimate,
+                    PersistentEffectKind.TimedAttackIntervalOverride, persistentTuning: rapidTuning)),
+
+            BombermanCard("bomberman_orbitale", "Orbitale",
+                "Aktywne ulti: wokół ciebie krążą bomby gotowe do kontaktu z wrogami.",
+                4, Tags(TalentTag.Orbital, TalentTag.Physics, TalentTag.Aoe),
+                TalentRequirement.Create(),
+                TalentEffect.Grant(orbitale, OfferGenerator.GroupUltimate)),
+
+            BombermanCard("bomberman_nalot", "Nalot",
+                "Aktywne ulti: seria wybuchów w pasie przed tobą po krótkiej zapowiedzi.",
+                4, Tags(TalentTag.Airstrike, TalentTag.Aoe, TalentTag.Zone),
+                TalentRequirement.Create(),
+                TalentEffect.Grant(nalot, OfferGenerator.GroupUltimate)),
+
+            BombermanCard("bomberman_reakcja_termiczna", "Reakcja termiczna",
+                "Podpalone cele mogą wybuchnąć, zużywając część pozostałego burnu.",
+                5, Tags(TalentTag.Fire, TalentTag.Aoe),
+                TalentRequirement.Create(requiresTalents: new[] { "bomberman_kasetowa", "bomberman_piroman" }),
+                TalentEffect.Persistent(PersistentEffectKind.ConsumeBurnOnHit, OfferGenerator.GroupCapstone, termicznaTuning)),
+
+            BombermanCard("bomberman_feniks", "Feniks",
+                "Zabójstwo podpalonego wroga może zostawić krótką bombę-feniksa.",
+                5, Tags(TalentTag.Fire, TalentTag.Chain),
+                TalentRequirement.Create(requiresTalents: new[] { "bomberman_kasetowa", "bomberman_piroman" }),
+                TalentEffect.Persistent(PersistentEffectKind.PhoenixOnBurnKill, OfferGenerator.GroupCapstone, feniksTuning)),
+
+            BombermanCard("bomberman_polowanie_stadne", "Polowanie stadne",
+                "Homingi i wybuchy preferują elity i bossy w zasięgu, z rosnącym focusem.",
+                5, Tags(TalentTag.Seeking, TalentTag.Damage),
+                TalentRequirement.Create(requiresTalents: new[] { "bomberman_mini_torpedy" }),
+                TalentEffect.Persistent(PersistentEffectKind.PackHuntFocus, OfferGenerator.GroupCapstone, polowanieTuning)),
+
+            BombermanCard("bomberman_termobaryczny", "Termobaryczny",
+                "Podstawowe wybuchy zużywają burn i zyskują mocniejszy splash.",
+                5, Tags(TalentTag.Basic, TalentTag.Fire, TalentTag.Aoe),
+                TalentRequirement.Create(requiresTalents: new[] { "bomberman_wiekszy_huk", "bomberman_piroman" }),
+                TalentEffect.Persistent(PersistentEffectKind.ConsumeBurnOnHit, OfferGenerator.GroupCapstone, termobarycznyTuning)),
+
+            BombermanCard("bomberman_rozniecanie", "Rozniecanie",
+                "Splash petardy rozprzestrzenia burn na trafione cele.",
+                5, Tags(TalentTag.Basic, TalentTag.Fire, TalentTag.Aoe),
+                TalentRequirement.Create(requiresTalents: new[] { "bomberman_wiekszy_huk", "bomberman_piroman" }),
+                TalentEffect.Persistent(PersistentEffectKind.SpreadBurnOnSplash, OfferGenerator.GroupCapstone)),
+
+            BombermanCard("bomberman_karabin_maszynowy", "Karabin maszynowy",
+                "Petarda na stałe strzela szybciej, ale każdy strzał rani słabiej.",
+                5, Tags(TalentTag.Basic, TalentTag.RapidFire),
+                TalentRequirement.Create(requiresTagCounts: new[] { TagCountRequirement.Create(TalentTag.Basic, 2) }),
+                TalentEffect.Persistent(PersistentEffectKind.PermanentAttackIntervalOverride, OfferGenerator.GroupCapstone, karabinTuning)),
+
+            BombermanCard("bomberman_przelamanie", "Przełamanie",
+                "Pełne stacki ładunku wyzwalają opóźniony wybuch na celu.",
+                5, Tags(TalentTag.Basic, TalentTag.Demolition),
+                TalentRequirement.Create(requiresTalents: new[] { "bomberman_ladunek_kumulacyjny" }),
+                TalentEffect.Persistent(PersistentEffectKind.MarkedDelayedBlast, OfferGenerator.GroupCapstone, przelamanieTuning)),
+
+            BombermanCard("bomberman_treser_bomb", "Treser bomb",
+                "Kopniak może wystrzelić wszystkie pobliskie bomby naraz.",
+                5, Tags(TalentTag.Control, TalentTag.Trapper),
+                TalentRequirement.Create(requiresTalents: new[] { "bomberman_wybuch_ogluszajacy", "bomberman_saper" }),
+                TalentEffect.Persistent(PersistentEffectKind.MultiLaunchOwned, OfferGenerator.GroupCapstone, treserTuning)),
+
+            BombermanCard("bomberman_plonacy_taran", "Płonący taran",
+                "Kopnięta bomba niesie płonącego wroga i wybucha po krótkim locie.",
+                5, Tags(TalentTag.Fire, TalentTag.Physics),
+                TalentRequirement.Create(requiresTalents: new[] { "bomberman_wybuch_ogluszajacy", "bomberman_piroman" }),
+                TalentEffect.Persistent(PersistentEffectKind.CarryBurningOnKick, OfferGenerator.GroupCapstone, taranTuning)),
+
+            BombermanCard("bomberman_break", "BREAK!",
+                "Kula bilardowa dłużej jeździ, odbija się więcej razy i mocniej kończy.",
+                5, Tags(TalentTag.Physics, TalentTag.Collision),
+                TalentRequirement.Create(requiresTalents: new[] { "bomberman_kula_bilardowa" }),
+                TalentEffect.Persistent(PersistentEffectKind.BilliardBreakUpgrade, OfferGenerator.GroupCapstone, breakTuning)),
+
+            BombermanCard("bomberman_lancuch_kolizji", "Łańcuch kolizji",
+                "Każde trafienie kuli bilardowej powiększa finalny wybuch.",
+                5, Tags(TalentTag.Collision, TalentTag.Aoe),
+                TalentRequirement.Create(requiresTalents: new[] { "bomberman_kula_bilardowa" }),
+                TalentEffect.Persistent(PersistentEffectKind.CollisionScalingExplosion, OfferGenerator.GroupCapstone, lancuchTuning)),
+
+            BombermanCard("bomberman_przeladowany_magazynek", "Przeładowany magazynek",
+                "Podczas Szybkostrzelności splash petardy rośnie i zostawia krótki żar.",
+                5, Tags(TalentTag.RapidFire, TalentTag.Aoe),
+                TalentRequirement.Create(
+                    requiresUltimateId: "bomberman_szybkostrzelnosc",
+                    requiresTags: new[] { TalentTag.Basic }),
+                TalentEffect.Persistent(PersistentEffectKind.RapidSplashDuringOverride, OfferGenerator.GroupCapstone, przeladowanyTuning)),
+
+            BombermanCard("bomberman_reakcja_orbitalna", "Reakcja orbitalna",
+                "Wybuchy skracają czas przeładowania orbitujących bomb.",
+                5, Tags(TalentTag.Orbital, TalentTag.Chain),
+                TalentRequirement.Create(
+                    requiresUltimateId: "bomberman_orbitale",
+                    requiresTags: new[] { TalentTag.Orbital }),
+                TalentEffect.Persistent(PersistentEffectKind.OrbitalRechargeOnExplode, OfferGenerator.GroupCapstone, reakcjaOrbitalnaTuning)),
+
+            BombermanCard("bomberman_kasetowe_satelity", "Kasetowe satelity",
+                "Orbitujące bomby rozrzucają miniatury jak kasetowa przy wybuchu.",
+                5, Tags(TalentTag.Orbital, TalentTag.Chain),
+                TalentRequirement.Create(
+                    requiresUltimateId: "bomberman_orbitale",
+                    requiresTalents: new[] { "bomberman_kasetowa" }),
+                TalentEffect.Persistent(PersistentEffectKind.OrbitalInheritsCluster, OfferGenerator.GroupCapstone)),
+
+            BombermanCard("bomberman_uklad_planetarny", "Układ planetarny",
+                "Więcej orbitujących bomb na szerszym pierścieniu i szybszej rotacji.",
+                5, Tags(TalentTag.Orbital, TalentTag.Physics),
+                TalentRequirement.Create(
+                    requiresUltimateId: "bomberman_orbitale",
+                    requiresTags: new[] { TalentTag.Physics }),
+                TalentEffect.Persistent(PersistentEffectKind.PlanetaryOrbitUpgrade, OfferGenerator.GroupCapstone, planetarnyTuning)),
+
+            BombermanCard("bomberman_nalot_opozniony", "Nalot z opóźnionym zapłonem",
+                "Część wybuchów nalotu zostawia normalne bomby na ziemi.",
+                5, Tags(TalentTag.Airstrike, TalentTag.Trapper),
+                TalentRequirement.Create(
+                    requiresUltimateId: "bomberman_nalot",
+                    requiresTags: new[] { TalentTag.Airstrike }),
+                TalentEffect.Persistent(PersistentEffectKind.AirstrikeLeavesNormals, OfferGenerator.GroupCapstone)),
+
+            BombermanCard("bomberman_ostatnia_bomba", "Ostatnia bomba",
+                "Końcowy wybuch nalotu rośnie z liczbą unikalnych celów trafionych w sekwencji.",
+                5, Tags(TalentTag.Airstrike, TalentTag.Zone),
+                TalentRequirement.Create(
+                    requiresUltimateId: "bomberman_nalot",
+                    requiresTags: new[] { TalentTag.Zone }),
+                TalentEffect.Persistent(PersistentEffectKind.AirstrikeFinisher, OfferGenerator.GroupCapstone, ostatniaBombaTuning)),
+
+            BombermanCard("bomberman_10_bomb", "10 BOMB",
+                "Możesz utrzymać do dziesięciu bomb; nadmiar detonuje najstarszą.",
+                5, Tags(TalentTag.Demolition, TalentTag.Trapper),
+                TalentRequirement.Create(requiresAnyTags: new[] { TalentTag.Demolition, TalentTag.Trapper }),
+                TalentEffect.Persistent(PersistentEffectKind.DeployableCapBonus, OfferGenerator.GroupCapstone, capBonusTuning))
+        };
+    }
+
+    private static ClassProgressionTable CreateBombermanProgressionTable()
+    {
+        var table = ScriptableObject.CreateInstance<ClassProgressionTable>();
+        table.InitializeRuntime(
+            PlayerClassId.Bomberman,
+            new[] { "bomberman_bomba", "bomberman_detonator", "bomberman_kopniak" },
+            new[]
+            {
+                LevelOfferRule.Create(2, OfferRecipeKind.AllEligibleInGroup, 3, 3, OfferGenerator.GroupMutation),
+                LevelOfferRule.Create(3, OfferRecipeKind.MixIndependentAndFollowup, 3, 3,
+                    OfferGenerator.GroupCore, 2),
+                LevelOfferRule.Create(4, OfferRecipeKind.AllEligibleGrantUltimate, 3, 3),
+                LevelOfferRule.Create(5, OfferRecipeKind.AllEligible, 1, 8)
+            });
+        return table;
+    }
+
     private static ClassProgressionTable CreatePudzianProgressionTable()
     {
         var table = ScriptableObject.CreateInstance<ClassProgressionTable>();
@@ -337,11 +601,19 @@ public static class BuildContentFactory
 
     private static TalentDefinition Card(
         string id, string displayName, string description,
-        int level, TalentTag[] tags, TalentRequirement req, TalentEffect effect)
+        int level, TalentTag[] tags, TalentRequirement req, TalentEffect effect,
+        PlayerClassId classId = PlayerClassId.Pudzian)
     {
         var talent = ScriptableObject.CreateInstance<TalentDefinition>();
-        talent.ConfigureRuntime(id, displayName, description, PlayerClassId.Pudzian, level, tags, req, effect);
+        talent.ConfigureRuntime(id, displayName, description, classId, level, tags, req, effect);
         return talent;
+    }
+
+    private static TalentDefinition BombermanCard(
+        string id, string displayName, string description,
+        int level, TalentTag[] tags, TalentRequirement req, TalentEffect effect)
+    {
+        return Card(id, displayName, description, level, tags, req, effect, PlayerClassId.Bomberman);
     }
 
     private static MeleeWeaponDefinition CreateMelee(

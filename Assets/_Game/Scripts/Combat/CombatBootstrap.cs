@@ -10,6 +10,8 @@ public class CombatBootstrap : MonoBehaviour
     [SerializeField] private MeleeWeaponDefinition heavyWeapon;
     [SerializeField] private MeleeWeaponDefinition quickWeapon;
     [SerializeField] private float playerMaxHealth = 100f;
+    [SerializeField] private bool usePlaytestClassOverride;
+    [SerializeField] private PlayerClassId playtestClassOverride = PlayerClassId.Bomberman;
 
     public MeleeWeaponDefinition DefaultWeapon => defaultWeapon;
     public float PlayerMaxHealth => playerMaxHealth;
@@ -44,6 +46,13 @@ public class CombatBootstrap : MonoBehaviour
 
         var catalog = BuildSystemBootstrap.GetCatalogOrDefault();
         var classDef = catalog.GetDefaultClassForPlayerSlot(playerSlotIndex);
+        if (usePlaytestClassOverride && playerSlotIndex == 0)
+        {
+            var overrideClass = catalog.GetClass(playtestClassOverride);
+            if (overrideClass != null)
+                classDef = overrideClass;
+        }
+
         var teamLevel = SharedRunState.Instance != null ? SharedRunState.Instance.TeamLevel : 1;
         build.Initialize(classDef, catalog, playerSlotIndex, teamLevel);
 
@@ -92,6 +101,15 @@ public class CombatBootstrap : MonoBehaviour
                 SkillContentFactory.CreateTrzasniecie(),
                 SkillContentFactory.CreateNoChodzTu(),
                 SkillContentFactory.CreateByk()
+            });
+        }
+        else if (classDef.ClassId == PlayerClassId.Bomberman)
+        {
+            skills.Configure(new[]
+            {
+                SkillContentFactory.CreateBombermanBomba(),
+                SkillContentFactory.CreateBombermanDetonator(),
+                SkillContentFactory.CreateBombermanKopniak()
             });
         }
     }

@@ -30,4 +30,25 @@ public static class ProjectileRules
         var damageable = hit.GetComponentInParent<IDamageable>();
         return damageable != null && damageable.IsAlive;
     }
+
+    public static bool IsObstacleAt(Vector3 position, GameObject owner)
+    {
+        var playArea = MapPlayArea.Instance ?? Object.FindAnyObjectByType<MapPlayArea>();
+        if (playArea != null && !playArea.Contains(position))
+            return true;
+
+        var hits = Physics.OverlapSphere(position, OverlapRadius);
+        foreach (var hit in hits)
+        {
+            if (hit == null) continue;
+            if (owner != null && (hit.transform == owner.transform || hit.transform.IsChildOf(owner.transform)))
+                continue;
+            if (hit.GetComponentInParent<PlayerCharacter>() != null) continue;
+            if (hit.GetComponentInParent<EnemyController>() != null) continue;
+            if (hit.GetComponent<MapPlayArea>() != null) continue;
+            if (!hit.isTrigger && hit.gameObject.layer != 0) return true;
+        }
+
+        return false;
+    }
 }

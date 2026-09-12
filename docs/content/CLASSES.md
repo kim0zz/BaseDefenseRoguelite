@@ -34,6 +34,8 @@ Kit lvl 1: buława 3-hit + Stomp + Prowokacja + Byk. Mini-specy: `docs/content/s
 - pułapki.
 
 Kit: OPEN (M8.5 Cipak).
+
+## Jamie
 Uniwersalny miecznik.
 - najłatwiejszy dla początkującego,
 - melee,
@@ -41,6 +43,19 @@ Uniwersalny miecznik.
 - obrona.
 
 Kit: OPEN (M8.4 Jamie). Tożsamość „weapon-swap” jest wycofana.
+
+## Bomberman
+**DRAFT** — piąta klasa playable (opcja A, canvas PO M8.4). Drugi kompletny kit testujący framework progresji (po Pudzianie). MVP nadal ma **4** tożsamości (Cwel / Pudzian / Cipak / Jamie); Bomberman jest slice poza kolejnością M8.4→M8.6.
+
+Specjalista od stawianych ładunków i detonacji.
+- setup bomb + łańcuch wybuchów,
+- burn / homing / orbitale / nalot jako oś progresji,
+- naturalny build: Demolition + detonator,
+- off-meta: Trapper (miny) / Physics (billiard).
+
+Kit lvl 1: petarda + Bomba + Detonator + Kopniak. Mini-specy: `docs/content/skills/bomberman/`. Progresja L2–L5: `docs/content/TALENTS.md` § Bomberman. Plan: `docs/production/M84_BOMBERMAN_PLAN.md`.
+
+Playtest: `CombatBootstrap.usePlaytestClassOverride` na P1, klasa `playtestClassOverride` = Bomberman; domyślnie Pudzian gdy override wyłączony.
 
 ## Główna zasada klas
 Każda klasa:

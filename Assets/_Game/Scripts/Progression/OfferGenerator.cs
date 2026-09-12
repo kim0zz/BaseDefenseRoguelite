@@ -30,6 +30,9 @@ public static class OfferGenerator
             case OfferRecipeKind.OneMutationPerActive:
                 CollectOneMutationPerActive(result, table, catalog, snapshot, meta);
                 break;
+            case OfferRecipeKind.AllEligibleInGroup:
+                CollectAllEligibleInGroup(result, catalog, snapshot, meta, rule);
+                break;
             case OfferRecipeKind.MixIndependentAndFollowup:
                 CollectMix(result, catalog, snapshot, meta, rule);
                 break;
@@ -67,6 +70,21 @@ public static class OfferGenerator
 
             if (match != null)
                 result.Add(match);
+        }
+    }
+
+    private static void CollectAllEligibleInGroup(
+        List<TalentDefinition> result,
+        IReadOnlyList<TalentDefinition> catalog,
+        ProgressionSnapshot snapshot,
+        IMetaUnlockQuery meta,
+        LevelOfferRule rule)
+    {
+        foreach (var talent in catalog)
+        {
+            if (!IsLevelCard(talent, snapshot, meta)) continue;
+            if (talent.Effect == null || talent.Effect.OfferGroup != rule.IndependentGroup) continue;
+            result.Add(talent);
         }
     }
 

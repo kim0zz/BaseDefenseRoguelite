@@ -34,6 +34,14 @@ Pełny kit Pudziana (combo 3-hit, skille, talenty, ulti) — **BASELINE v0.1 DRA
 - ranged: 120%
 - szybkość ataku: 105%
 
+## Bomberman
+- HP: 95
+- ruch: 106% (5.3 m/s vs Jamie 5.0)
+- ranged: 110%
+- szybkość ataku (petarda): 0.70 s interwał (AA)
+
+Pełny kit Bombermana (petarda, bomby, talenty, ulti) — **BASELINE v0.1 DRAFT**: `docs/production/M84_BOMBERMAN_PLAN.md` sekcja D. Implementer nie wymyśla liczb.
+
 ## Automatyczny wzrost na level
 Jamie:
 - +7 HP,
@@ -53,6 +61,10 @@ Cipak:
 - +5 HP,
 - +5% obrażeń dystansowych,
 - +2% prędkości pocisków.
+
+Bomberman:
+- +6 HP,
+- +4% obrażeń dystansowych (petarda).
 
 ## Benchmark moba fala 1
 - HP: 18

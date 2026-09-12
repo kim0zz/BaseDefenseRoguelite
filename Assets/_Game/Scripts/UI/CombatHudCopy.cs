@@ -1,4 +1,6 @@
+using System;
 using System.Globalization;
+using System.Reflection;
 
 /// <summary>
 /// Teksty HUD walki — osobno od OnGUI, żeby dało się testować format.
@@ -96,5 +98,144 @@ public static class CombatHudCopy
             3 => "RB",
             _ => "?"
         };
+    }
+
+    public static string FormatBombCap(int count, int cap)
+    {
+        if (cap <= 0)
+            cap = 3;
+        if (count < 0)
+            count = 0;
+        if (count > cap)
+            count = cap;
+        return $"Bomby {count}/{cap}";
+    }
+
+    public static string FormatOrbitalPips(int ready, int total)
+    {
+        if (total <= 0)
+            return "";
+        if (ready < 0)
+            ready = 0;
+        if (ready > total)
+            ready = total;
+        return $"Orb {ready}/{total}";
+    }
+
+    /// <summary>
+    /// Timed or permanent AA interval override (Bomberman rapid / karabin).
+    /// Returns false when runtime has not wired the effect yet.
+    /// </summary>
+    public static bool TryFormatAttackIntervalOverride(PlayerPersistentEffects persistents, out string label)
+    {
+        label = null;
+        if (persistents == null)
+            return false;
+
+        if (TryReadOverrideRemaining(persistents, "TimedAttackIntervalOverride", out var timedRemaining))
+        {
+            label = timedRemaining > 0.05f
+                ? string.Format(CultureInfo.InvariantCulture, "RAPID {0:0.#}s", timedRemaining)
+                : "RAPID";
+            return true;
+        }
+
+        if (HasPersistentKind(persistents, "PermanentAttackIntervalOverride"))
+        {
+            label = "RAPID";
+            return true;
+        }
+
+        if (TryReadOverrideRemaining(persistents, out var genericRemaining))
+        {
+            label = genericRemaining > 0.05f
+                ? string.Format(CultureInfo.InvariantCulture, "RAPID {0:0.#}s", genericRemaining)
+                : "RAPID";
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryReadOverrideRemaining(PlayerPersistentEffects persistents, out float remaining)
+    {
+        remaining = 0f;
+        if (persistents == null)
+            return false;
+
+        var type = persistents.GetType();
+        foreach (var name in new[]
+                 {
+                     "TimedAttackIntervalRemaining",
+                     "AttackIntervalOverrideRemaining",
+                     "RapidFireRemaining"
+                 })
+        {
+            var prop = type.GetProperty(name, BindingFlags.Public | BindingFlags.Instance);
+            if (prop?.PropertyType == typeof(float) && prop.GetValue(persistents) is float value && value > 0f)
+            {
+                remaining = value;
+                return true;
+            }
+        }
+
+        foreach (var name in new[] { "TryGetAttackIntervalOverride", "TryGetTimedAttackIntervalOverride" })
+        {
+            var method = type.GetMethod(name, BindingFlags.Public | BindingFlags.Instance);
+            if (method == null || method.ReturnType != typeof(bool))
+                continue;
+
+            var parameters = method.GetParameters();
+            object[] args;
+            if (parameters.Length == 1 && parameters[0].ParameterType == typeof(float).MakeByRefType())
+            {
+                args = new object[] { 0f };
+                if (method.Invoke(persistents, args) is true)
+                {
+                    remaining = (float)args[0];
+                    return remaining > 0f || HasPersistentKind(persistents, "TimedAttackIntervalOverride");
+                }
+            }
+            else if (parameters.Length == 2 &&
+                     parameters[0].ParameterType == typeof(float).MakeByRefType() &&
+                     parameters[1].ParameterType == typeof(float).MakeByRefType())
+            {
+                args = new object[] { 0f, 0f };
+                if (method.Invoke(persistents, args) is true)
+                {
+                    remaining = (float)args[1];
+                    return remaining > 0f || HasPersistentKind(persistents, "TimedAttackIntervalOverride");
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static bool TryReadOverrideRemaining(
+        PlayerPersistentEffects persistents,
+        string kindName,
+        out float remaining)
+    {
+        remaining = 0f;
+        if (!HasPersistentKind(persistents, kindName))
+            return false;
+
+        if (TryReadOverrideRemaining(persistents, out remaining))
+            return true;
+
+        remaining = 0f;
+        return true;
+    }
+
+    private static bool HasPersistentKind(PlayerPersistentEffects persistents, string kindName)
+    {
+        if (persistents == null || string.IsNullOrEmpty(kindName))
+            return false;
+
+        if (!Enum.TryParse(typeof(PersistentEffectKind), kindName, out var parsed))
+            return false;
+
+        return persistents.Has((PersistentEffectKind)parsed);
     }
 }
