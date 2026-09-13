@@ -6,5 +6,6 @@ public enum DeployableCategory
     Normal,
     Child,
     Orbital,
-    Strike
+    Strike,
+    DashCharge
 }

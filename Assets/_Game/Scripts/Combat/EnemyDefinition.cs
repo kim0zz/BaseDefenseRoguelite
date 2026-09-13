@@ -40,6 +40,12 @@ public class EnemyDefinition : ScriptableObject
     [SerializeField] private float supportDamageMultiplier = 1f;
     [SerializeField] private float shieldProtectRadius;
 
+    [Header("Wygląd")]
+    [SerializeField] private GameObject visualPrefab;
+    [SerializeField] private Vector3 visualOffset = new(0f, -1f, 0f);
+
+    public GameObject VisualPrefab => visualPrefab;
+    public Vector3 VisualOffset => visualOffset;
     public EnemyKind Kind => enemyKind;
     public string DisplayName => displayName;
     public float MaxHealth => maxHealth;

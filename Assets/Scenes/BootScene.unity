@@ -819,6 +819,7 @@ MonoBehaviour:
   playerMaxHealth: 100
   usePlaytestClassOverride: 1
   playtestClassOverride: 4
+  bombermanVisualPrefab: {fileID: 4255570890792471439, guid: e31de4d6aa76ef14caf0a48f721de8d9, type: 3}
 --- !u!114 &800000004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -895,6 +896,8 @@ MonoBehaviour:
   supportMoveSpeedMultiplier: 1
   supportDamageMultiplier: 1
   shieldProtectRadius: 0
+  visualPrefab: {fileID: 0}
+  visualOffset: {x: 0, y: -1, z: 0}
 --- !u!1 &900000001
 GameObject:
   m_ObjectHideFlags: 0
@@ -1217,6 +1220,8 @@ MonoBehaviour:
   supportMoveSpeedMultiplier: 1
   supportDamageMultiplier: 1
   shieldProtectRadius: 0
+  visualPrefab: {fileID: 0}
+  visualOffset: {x: 0, y: -1, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

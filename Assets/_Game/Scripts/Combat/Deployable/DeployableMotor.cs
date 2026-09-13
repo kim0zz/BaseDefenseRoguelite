@@ -21,6 +21,7 @@ public class DeployableMotor : MonoBehaviour
     private DeployableMotorState _state = DeployableMotorState.Idle;
     private Vector3 _kickDirection;
     private float _kickDistanceRemaining;
+    private float _kickSpeed;
     private float _armTimer;
     private GameObject _homingTarget;
     private CollisionChainMotor _chainMotor;
@@ -40,14 +41,15 @@ public class DeployableMotor : MonoBehaviour
         _armTimer = DeployableTuning.SaperArmSeconds;
     }
 
-    public void Kick(Vector3 direction)
+    public void Kick(Vector3 direction, float speed = -1f, float maxDistance = -1f)
     {
         if (_deployable == null) return;
         _deployable.MarkKicked();
         _state = DeployableMotorState.Kicked;
         _kickDirection = direction.sqrMagnitude > 0.01f ? direction.normalized : Vector3.forward;
         _kickDirection.y = 0f;
-        _kickDistanceRemaining = DeployableTuning.KickMaxDistance;
+        _kickSpeed = speed > 0f ? speed : DeployableTuning.KickSpeed;
+        _kickDistanceRemaining = maxDistance > 0f ? maxDistance : DeployableTuning.KickMaxDistance;
     }
 
     public void BeginHoming()
@@ -70,8 +72,12 @@ public class DeployableMotor : MonoBehaviour
 
         switch (_state)
         {
+            case DeployableMotorState.Idle:
+                TickShoveContact();
+                break;
             case DeployableMotorState.Armed:
                 TickArmed(deltaTime);
+                TickShoveContact();
                 break;
             case DeployableMotorState.Kicked:
                 TickKicked(deltaTime);
@@ -108,9 +114,29 @@ public class DeployableMotor : MonoBehaviour
         }
     }
 
+    private void TickShoveContact()
+    {
+        if (_deployable == null || _deployable.IsDetonated) return;
+
+        var hits = Physics.OverlapSphere(transform.position, DeployableTuning.ShoveDetonateRadius);
+        foreach (var hit in hits)
+        {
+            if (hit.GetComponentInParent<PlayerCharacter>() != null) continue;
+            var enemy = hit.GetComponentInParent<EnemyController>();
+            if (enemy == null) continue;
+            var dmg = hit.GetComponentInParent<IDamageable>();
+            if (dmg == null || !dmg.IsAlive) continue;
+            var receiver = hit.GetComponentInParent<ForcedMovementReceiver>();
+            if (receiver == null || !receiver.IsShoveActive) continue;
+
+            _deployable.Detonate();
+            return;
+        }
+    }
+
     private void TickKicked(float deltaTime)
     {
-        var step = DeployableTuning.KickSpeed * deltaTime;
+        var step = _kickSpeed * deltaTime;
         if (step >= _kickDistanceRemaining)
         {
             step = _kickDistanceRemaining;

@@ -64,7 +64,8 @@ public static class DeployableHudRead
             var skill = skills.GetSkill(i);
             if (skill != null && (skill.ShapeType == SkillShapeType.PlaceDeployable
                 || skill.ShapeType == SkillShapeType.DetonateOwned
-                || skill.ShapeType == SkillShapeType.LaunchNearestOwned))
+                || skill.ShapeType == SkillShapeType.LaunchNearestOwned
+                || skill.ShapeType == SkillShapeType.PlaceAndDash))
                 return true;
         }
 

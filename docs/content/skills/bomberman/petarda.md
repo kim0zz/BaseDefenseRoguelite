@@ -25,7 +25,7 @@ predkosc_pocisku_m_s: 14
 # Petarda
 
 ## Cel i rola
-Podstawowy rzut granatem — splash na clumpie, bez knockbacku; setup pod bomby i detonator.
+Podstawowy rzut granatem — splash na clumpie, bez knockbacku; setup pod bomby i kopniak.
 
 ## Wejście i celowanie
 Tap w kierunku aim (mysz / prawy stick). Spawn pocisku po windup (jak łuk Bow).

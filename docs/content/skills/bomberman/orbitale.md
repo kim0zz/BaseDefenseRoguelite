@@ -33,7 +33,7 @@ Aktywacja ulti — pierścień wokół ownera. Kick orbital dziedziczy kick/bomb
 Orbit r **2.2 m**, **140°/s**. Recharge **5.0 s** per slot (niezależnie). Kontakt wróg → explode.
 
 ## Trafienie
-Dmg **12**, blast r **1.80 m**, contact r **0.50 m**. `detonatable: false` — Detonator ich nie rusza (chyba że talent).
+Dmg **12**, blast r **1.80 m**, contact r **0.50 m**. `detonatable: false` — ręczny Detonator usunięty z kitu; orbitale nadal nie detonują się zdalnie.
 
 ## Kontrola i fizyka
 Kategoria Orbital. Reakcja orbitalna (L5): −1.0 s na slotach w recharge (clamp ≥0).

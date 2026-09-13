@@ -1,9 +1,11 @@
 # M8.4 — Bomberman kompletny (drugi pełny test frameworku progresji)
 
 ## Status
-**NEEDS PLAYTEST** — 2026-09-11. Kod + Verifier: AC 1–12 PASS, Unity Console 0 Error. Game feel = człowiek. L5 stuby (5 kart) FLAG, nie blokują L1. Balance Agent: nie.
+**NEEDS PLAYTEST** — kit L1 przebudowany 2026-09-13 (Lead): Bomba z lontem, Kopniak obszarowy, Wybuchowy odskok zamiast Detonatora. Petarda bez zmian. Talenty L2–L5 zachowane; Treser = upgrade omnidirectional, Saper = mina równolegle z lontem. Żadnego talentu nie wyłączono.
 
-Cel: Bomberman lvl 1–5 grywalny ręcznie, przez **generyczny** framework M8.1 (eligibility / tagi / ulti / `ClassProgressionTable`). To drugi test frameworku po Pudzianie — inne czasowniki (stawianie, detonacja, kopnięcie, burn, homing, orbity, nalot), bez `if (class == Bomberman)` w logice.
+Historyczne D1/D5 (ręczny Detonator jako slot 1) są **nadpisane** tym rebuildem. Mini-spec slotu 2: `docs/content/skills/bomberman/wybuchowy_odskok.md`.
+
+Cel: Bomberman lvl 1–5 grywalny ręcznie, przez **generyczny** framework M8.1 (eligibility / tagi / ulti / `ClassProgressionTable`). To drugi test frameworku po Pudzianie — inne czasowniki (stawianie, lont, kopnięcie obszaru, odskok, burn, homing, orbity, nalot), bez `if (class == Bomberman)` w logice.
 
 ## FROZEN — bez zmian
 - Pętla: `PLAYER_PROGRESSION.md` (4 decyzje, pauza, full HP, wspólny EXP, max 5).
@@ -588,7 +590,7 @@ AC T1–T10, brak 0 L5, build odpala, playtest bez edycji kodu (Inspector overri
 # Playtest PO
 
 1. **BootScene** → w hierarchii znajdź `CombatBootstrap` → włącz `usePlaytestClassOverride` na **P1**, `playtestClassOverride` = Bomberman. Wyłączony = Pudzian (regresja).
-2. **Lvl 1:** petarda splash (2 hity = grunt 18), Q bomba ×3, E detonator chain, R kopniak (ściana = stop, wróg = wybuch). HUD: `Bomby n/cap` bez konsoli.
+2. **Lvl 1:** petarda splash (2 hity = grunt 18), Q bomba ×3 z lontem, E odskok (ładunek + dash), R kopniak (tłum + bomby w obszarze). HUD: `Bomby n/cap` bez konsoli.
 3. **Lvl 2–5:** level-up pauza; sprawdź 3 mutacje L2, follow-up L3 (K→T, H→L, O→B), 3 ulti L4, L5 ≥2 opcje na build.
 4. **Ulti:** F Szybkostrzelność → HUD `RAPID` / timer 6 s; Orbitale → `Orb 4/4`; Nalot → pas aim, 0 self-dmg.
 5. **Regresja:** override OFF → P1 Pudzian, graf 36 nietknięty.

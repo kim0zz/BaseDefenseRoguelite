@@ -8,5 +8,6 @@ public enum SkillShapeType
     PlaceDeployable,
     DetonateOwned,
     LaunchNearestOwned,
-    AimStripBurst
+    AimStripBurst,
+    PlaceAndDash
 }

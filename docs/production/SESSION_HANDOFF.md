@@ -15,7 +15,7 @@ Playtest 2026-09-11: karty widać; Hart ma własny pasek; Ram szarżuje gracza, 
 1. Stop + Play **BootScene**.
 2. Inspector → `CombatBootstrap` → **`usePlaytestClassOverride` = true** na P1, klasa `playtestClassOverride` = Bomberman. **Wyłączone** = Pudzian (domyślna regresja).
 3. Sprawdź HUD bez konsoli: `Bomby 0/3` → po place rośnie; ulti Szybkostrzelność → `RAPID` lub `RAPID Xs`; Orbitale → `Orb 4/4`.
-4. Q/E/R/F = Bomba / Detonator / Kopniak / ulti (jak Pudzian Q/E/R/F).
+4. Q/E/R/F = Bomba / Wybuchowy odskok / Kopniak / ulti (jak Pudzian Q/E/R/F).
 5. Level-up L2–L5: 27 buildów, min. 2 karty L5 — szczegóły w planie § Playtest PO.
 6. Po teście: override OFF → Pudzian L2–L5 regresja.
 

@@ -185,7 +185,7 @@ public class DeployableRegistry : MonoBehaviour, IDeployableHudInfo
             ?? DeployableTuning.DefaultNormalCap;
         SetCap(owner, cap);
 
-        return Deployable.SpawnPlaceholder(
+        var placed = Deployable.SpawnPlaceholder(
             position,
             owner,
             DeployableCategory.Normal,
@@ -194,6 +194,25 @@ public class DeployableRegistry : MonoBehaviour, IDeployableHudInfo
             skill.BossStaggerContribution,
             skill.MaxTargets,
             detonatable: true);
+        placed.SetFuse(DeployableTuning.MainBombFuseSeconds);
+        return placed;
+    }
+
+    public static Deployable PlaceDashCharge(GameObject owner, Vector3 position)
+    {
+        if (owner == null) return null;
+
+        var placed = Deployable.SpawnPlaceholder(
+            position,
+            owner,
+            DeployableCategory.DashCharge,
+            DeployableTuning.DashChargeDamage,
+            DeployableTuning.DashChargeRadius,
+            DeployableTuning.DashChargeBossStagger,
+            DeployableTuning.DashChargeMaxTargets,
+            detonatable: true);
+        placed.SetFuse(DeployableTuning.DashChargeFuseSeconds);
+        return placed;
     }
 
     public static void DespawnAllOwned(GameObject owner)

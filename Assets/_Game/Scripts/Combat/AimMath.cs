@@ -92,4 +92,18 @@ public static class AimMath
 
         return FlattenXz(currentFacing, Vector3.forward);
     }
+
+    /// <summary>
+    /// Kierunek odskoku: bieżący ruch → ostatni ruch → zwrócenie postaci.
+    /// </summary>
+    public static Vector3 ResolveDashDirection(Vector3 currentMove, Vector3 lastMove, Vector3 facing)
+    {
+        if (currentMove.sqrMagnitude >= MinAimDistanceSqr)
+            return FlattenXz(currentMove, facing);
+
+        if (lastMove.sqrMagnitude >= MinAimDistanceSqr)
+            return FlattenXz(lastMove, facing);
+
+        return FlattenXz(facing, Vector3.forward);
+    }
 }

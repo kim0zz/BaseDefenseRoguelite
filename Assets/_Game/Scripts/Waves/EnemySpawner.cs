@@ -39,6 +39,15 @@ public static class EnemySpawner
         var enemy = go.AddComponent<EnemyController>();
         enemy.Configure(definition, lane, eliteModifier);
 
+        if (definition.VisualPrefab != null)
+        {
+            var visual = Object.Instantiate(definition.VisualPrefab, go.transform, false);
+            visual.transform.localPosition = definition.VisualOffset;
+            var placeholder = go.GetComponent<Renderer>();
+            if (placeholder != null) placeholder.enabled = false;
+            visual.AddComponent<EnemyModelView>().Initialize(enemy);
+        }
+
         return enemy;
     }
 

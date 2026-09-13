@@ -85,7 +85,10 @@ public static class ExplosionResolver
         if (persistents != null)
             persistents.TryPhoenixOnBurnKill(owner, origin, generation);
 
-        if (generation == 0 && persistents != null && persistents.Has(PersistentEffectKind.ClusterOnExplode))
+        if (generation == 0
+            && category != DeployableCategory.DashCharge
+            && persistents != null
+            && persistents.Has(PersistentEffectKind.ClusterOnExplode))
             SpawnClusterChildren(origin, owner, persistents, category);
     }
 

@@ -6,48 +6,54 @@ typ: aktywny
 slot: umiejetnosc_3
 status: DRAFT
 wejscie: tap
-celowanie: kierunek
-ksztalt: linia
-zasieg_pick_m: 3.5
-predkosc_bomby_m_s: 14
-max_dystans_m: 7.0
-przygotowanie_s: 0.15
-faza_aktywna_s: 0.20
-wykonczenie_s: 0.25
-czas_odnowienia_s: 4.0
+celowanie: kierunek_aim
+ksztalt: kapsula_przed
+szerokosc_m: 3.40
+dlugosc_m: 3.80
+predkosc_bomby_m_s: 16
+max_dystans_m: 6.5
+shove_predkosc_m_s: 11
+shove_czas_s: 0.30
+przygotowanie_s: 0.08
+faza_aktywna_s: 0.10
+wykonczenie_s: 0.18
+czas_odnowienia_s: 3.0
 obrazenia: 0
-on_enemy: explode
+on_enemy_bomba: explode
 on_wall: stop_bez_wybuchu
 ---
 
 # Kopniak
 
 ## Cel i rola
-Kopie **najbliższą** własną bombę w promieniu **3.5 m** w kierunku aim. Skill, nie AA.
+Natychmiastowe, szerokie kopnięcie przed postacią w **kierunku celowania**. Odpycha wrogów w obszarze i wystrzeliwuje wszystkie własne ładunki w tym samym polu. Działa bez bomby jako narzędzie kontroli tłumu.
 
 ## Wejście i celowanie
-Tap + aim. Pick: najbliższa owned deployable w zasięgu.
+Tap + aim (mysz / prawy stick; puszczony prawy stick = istniejąca konwencja `AimMath.ResolveFacing`). Nie wymaga ustawienia się za konkretną bombą.
 
 ## Timing i ruch
-Windup 0.15 / active 0.20 / recovery 0.25. CD **4.0 s**.
+Windup 0.08 / active 0.10 / recovery 0.18. CD **3.0 s** (DRAFT).
 
 ## Trafienie
-Bomba leci **14 m/s**, max **7.0 m**. Kontakt z wrógiem → wybuch (bazowo). Ściana / obstacle / koniec zasięgu → **stop, 0 explode**. Boss: wybuch na kontakcie, **0** displace bossa.
+Kapsuła **3.40 × 3.80 m**. Bomby lecą **16 m/s**, max **6.5 m**. Kontakt kopniętej bomby z wrogiem → wybuch. Ściana / obstacle / koniec zasięgu → **stop, 0 explode**.
+Wróg wepchnięty w nieruchomą bombę odpala ją wcześniej. Zwykłe podejście **nie** detonuje (miejsce na Saper).
 
 ## Kontrola i fizyka
-`DeployableMotor` — nie rusza transformu wroga. Wybuch ogłuszający (L2): stun 1.0 / 0.5 / 0 s + boss stagger +8. Kula bilardowa nadpisuje natychmiastowy wybuch.
+Shove przez `ForcedMovementRequest.ShoveAlong` + profil odporności: grunt pełny, elita ×0.5, boss **0** displace.
+`DeployableMotor` rusza bombę. Wybuch ogłuszający (L2): stun 1.0 / 0.5 / 0 s. Kula bilardowa nadpisuje natychmiastowy wybuch kopniętej bomby.
+Jedna bomba: `IsDetonated` — brak podwójnego wybuchu.
 
 ## Czas odnowienia i koszt
-CD 4.0 s. Działa na Normal, Child i orbitale (kick orbital dziedziczy persistents).
+CD 3.0 s. Trafia Normal, Child, DashCharge i orbitale. Treser: dodatkowo wszystkie pobliskie wokół castera.
 
 ## Animacja
 Placeholder kopnięcia + trail bomby.
 
 ## Feedback
-Czytelny kierunek lotu; stop na ścianie bez wybuchu (PO feel).
+Czytelny obszar przed postacią; stop na ścianie bez wybuchu.
 
 ## Sytuacje brzegowe
-Brak bomby w pick range = pudło. Pauza level-upu zatrzymuje motor.
+0 bomb = nadal shove wrogów. Pauza level-upu zatrzymuje motor. Lont kopniętej bomby **nie** restartuje.
 
 ## Co-op
 Tylko własne bomby.
@@ -56,5 +62,5 @@ Tylko własne bomby.
 Wybuch ogłuszający, Kula bilardowa, Płonący taran, Treser bomb, BREAK! / Łańcuch kolizji.
 
 ## Telemetria
-- pick success rate
+- liczba wrogów / bomb w obszarze
 - wall stop vs enemy explode ratio

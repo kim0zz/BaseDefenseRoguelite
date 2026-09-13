@@ -56,6 +56,7 @@ public class PlayerSkillController : MonoBehaviour
     public float CooldownRemaining => GetCooldownRemaining(0);
     public float CooldownNormalized => GetCooldownNormalized(0);
     public bool IsCasting => _cycle.IsCasting;
+    public float CastElapsed => _cycle.Elapsed;
     public int ActiveSlot => _activeSlot;
     public bool DebugForceCrackZoneModifier => debugForceCrackZoneModifier;
     public bool DebugForceLeapStompModifier => debugForceLeapStompModifier;
@@ -299,6 +300,7 @@ public class PlayerSkillController : MonoBehaviour
 
         var skill = ActiveSkill;
         var isCharge = IsChargeSkill(skill);
+        var isDash = IsDashPlace(skill);
         var isLeapStomp = IsLeapCast(skill);
 
         _player.SetAttackMoveMultiplier(GetCastMoveMultiplier(skill, isLeapStomp));
@@ -327,7 +329,9 @@ public class PlayerSkillController : MonoBehaviour
                 && _activeSlot == UltimateSlot)
                 _persistentsHost?.NotifyUltimateActivated();
 
-            if (isCharge)
+            if (isDash)
+                BeginDashActive(skill);
+            else if (isCharge)
                 BeginChargeActive(skill);
             else if (isLeapStomp)
                 BeginLeapActive(skill);
@@ -341,16 +345,16 @@ public class PlayerSkillController : MonoBehaviour
                 enteredRecovery = _cycle.Phase == SkillCastPhase.Recovery;
         }
 
-        if (isCharge && _cycle.Phase == SkillCastPhase.Active)
+        if ((isCharge || isDash) && _cycle.Phase == SkillCastPhase.Active)
         {
             if (TryHandleChargeEarlyStop())
                 enteredRecovery = true;
-            else
+            else if (isCharge)
                 TickChargeActiveHits(skill);
         }
 
         if (enteredRecovery)
-            OnEnteredRecovery(isCharge || isLeapStomp);
+            OnEnteredRecovery(isCharge || isLeapStomp || isDash);
 
         if (tick.ReturnedToIdle)
         {
@@ -638,6 +642,9 @@ public class PlayerSkillController : MonoBehaviour
     private static bool IsChargeSkill(SkillDefinition skill) =>
         skill != null && skill.ShapeType == SkillShapeType.ChargeLine;
 
+    private static bool IsDashPlace(SkillDefinition skill) =>
+        skill != null && skill.ShapeType == SkillShapeType.PlaceAndDash;
+
     private float GetCastMoveMultiplier(SkillDefinition skill, bool isLeapStomp = false)
     {
         if (skill != null
@@ -675,6 +682,25 @@ public class PlayerSkillController : MonoBehaviour
     private void UpdateChargeTelegraphAim()
     {
         _telegraph.SetChargeLineDirection(GetAimDirection());
+    }
+
+    private void BeginDashActive(SkillDefinition skill)
+    {
+        DeployableRegistry.PlaceDashCharge(gameObject, transform.position);
+
+        var dashDir = AimMath.ResolveDashDirection(
+            _player.CurrentMoveDirection,
+            _player.LastMoveDirection,
+            _player.FacingDirection);
+
+        var charge = ForcedMovementRequest.CasterCharge(
+            gameObject,
+            dashDir,
+            skill.ChargeSpeed > 0f ? skill.ChargeSpeed : DeployableTuning.DashSpeed,
+            skill.ActiveSeconds,
+            honorCollisions: true);
+        ForcedMovementResolver.Apply(charge, gameObject);
+        RecordUseTelemetry(skill, default);
     }
 
     private void BeginChargeActive(SkillDefinition skill)
@@ -925,27 +951,7 @@ public class PlayerSkillController : MonoBehaviour
     private void ResolveLaunchNearestOwned(SkillDefinition skill)
     {
         var aim = GetAimDirection();
-        var multi = _persistentsHost != null && _persistentsHost.Has(PersistentEffectKind.MultiLaunchOwned);
-        var range = multi ? DeployableTuning.MultiLaunchPickRange : DeployableTuning.KickPickRange;
-        var cap = _persistentsHost?.GetDeployableCap() ?? DeployableTuning.DefaultNormalCap;
-        var maxCount = multi ? cap : 1;
-
-        var targets = DeployableRegistry.FindAllInRange(
-            gameObject,
-            transform.position,
-            range,
-            d => d.Category == DeployableCategory.Normal
-                || d.Category == DeployableCategory.Child
-                || d.Category == DeployableCategory.Orbital,
-            maxCount);
-
-        var host = GetComponent<OrbitingDeployableHost>();
-        foreach (var deployable in targets)
-        {
-            if (host != null && host.TryKick(deployable, aim))
-                continue;
-            deployable.Motor.Kick(aim);
-        }
+        DeployableKickAreaResolver.Execute(skill, gameObject, transform.position, aim, targetLayers);
     }
 
     private void SpawnImpactFeedback(SkillDefinition skill, Vector3 center)

@@ -393,7 +393,7 @@ public static class BuildContentFactory
                 TalentEffect.Persistent(PersistentEffectKind.KickExplodeStun, OfferGenerator.GroupMutation, ogluszajacyTuning)),
 
             BombermanCard("bomberman_saper", "Saper",
-                "Postawione bomby uzbrajają się i wybuchają, gdy wróg wejdzie w zasięg.",
+                "Postawione bomby uzbrajają się i wybuchają, gdy wróg wejdzie w zasięg. Działa równolegle z lontem.",
                 3, Tags(TalentTag.Trapper, TalentTag.Control),
                 TalentRequirement.Create(),
                 TalentEffect.Persistent(PersistentEffectKind.ArmToProximityMine, OfferGenerator.GroupCore, saperTuning)),
@@ -484,7 +484,7 @@ public static class BuildContentFactory
                 TalentEffect.Persistent(PersistentEffectKind.MarkedDelayedBlast, OfferGenerator.GroupCapstone, przelamanieTuning)),
 
             BombermanCard("bomberman_treser_bomb", "Treser bomb",
-                "Kopniak może wystrzelić wszystkie pobliskie bomby naraz.",
+                "Kopniak dodatkowo wystrzeliwuje wszystkie pobliskie bomby wokół ciebie, nie tylko te przed tobą.",
                 5, Tags(TalentTag.Control, TalentTag.Trapper),
                 TalentRequirement.Create(requiresTalents: new[] { "bomberman_wybuch_ogluszajacy", "bomberman_saper" }),
                 TalentEffect.Persistent(PersistentEffectKind.MultiLaunchOwned, OfferGenerator.GroupCapstone, treserTuning)),
@@ -568,7 +568,7 @@ public static class BuildContentFactory
         var table = ScriptableObject.CreateInstance<ClassProgressionTable>();
         table.InitializeRuntime(
             PlayerClassId.Bomberman,
-            new[] { "bomberman_bomba", "bomberman_detonator", "bomberman_kopniak" },
+            new[] { "bomberman_bomba", "bomberman_wybuchowy_odskok", "bomberman_kopniak" },
             new[]
             {
                 LevelOfferRule.Create(2, OfferRecipeKind.AllEligibleInGroup, 3, 3, OfferGenerator.GroupMutation),

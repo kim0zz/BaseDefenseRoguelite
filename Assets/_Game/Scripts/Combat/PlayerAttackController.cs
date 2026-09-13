@@ -27,6 +27,9 @@ public class PlayerAttackController : MonoBehaviour
     private bool _holdAttack;
 
     public bool IsAttacking => _useCombo ? _comboCycle.IsAttacking : _cycle.IsAttacking;
+    // Read-only timing for ranged model animation; damage remains owned by the attack cycle.
+    public float SingleAttackElapsed => _cycle.Elapsed;
+    public float SingleAttackInterval => _cycle.Interval;
     public AttackPhase Phase => _useCombo ? _comboCycle.Phase : _cycle.Phase;
     public int ComboStep => _useCombo ? _comboCycle.CurrentHitIndex + 1 : 1;
     public WeaponFamily CycleFamily => IsAttacking

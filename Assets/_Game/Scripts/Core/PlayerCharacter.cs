@@ -20,6 +20,8 @@ public class PlayerCharacter : MonoBehaviour
     private bool _combatEnabled = true;
     private Vector3 _facingDirection = Vector3.forward;
     private Vector3 _aimDirection = Vector3.forward;
+    private Vector3 _currentMoveDirection;
+    private Vector3 _lastMoveDirection = Vector3.forward;
     private float _configuredMoveSpeed = -1f;
     private float _attackMoveMultiplier = 1f;
     private bool _facingLocked;
@@ -39,6 +41,8 @@ public class PlayerCharacter : MonoBehaviour
     public bool IsCombatEnabled => _combatEnabled;
     public Vector3 FacingDirection => _facingDirection;
     public Vector3 AimDirection => _aimDirection;
+    public Vector3 CurrentMoveDirection => _currentMoveDirection;
+    public Vector3 LastMoveDirection => _lastMoveDirection;
     public Camera AimCamera => ResolveAimCamera();
 
     public void ApplyMoveSpeed(float speed)
@@ -189,6 +193,10 @@ public class PlayerCharacter : MonoBehaviour
 
         var moveInput = ReadMoveInput();
         var moveDirection = new Vector3(moveInput.x, 0f, moveInput.y);
+        _currentMoveDirection = moveDirection;
+        if (moveInput.sqrMagnitude >= 0.01f)
+            _lastMoveDirection = moveDirection.normalized;
+
         var hasAim = TryReadAimDirection(out var aim);
         _aimDirection = AimMath.ResolveFacing(_aimDirection, moveDirection, hasAim, aim);
 

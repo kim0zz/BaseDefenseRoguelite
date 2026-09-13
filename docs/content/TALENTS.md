@@ -104,7 +104,7 @@ Tagi ulti liczą się. Singleton tylko na ścieżce Kolosa bez TAUNT/HEAL/BERSER
 
 # Bomberman
 
-Kit lvl 1: petarda + **Bomba** + **Detonator** + **Kopniak**. Mini-specy: `docs/content/skills/bomberman/`. Liczby v0.1: `docs/production/M84_BOMBERMAN_PLAN.md` sekcja D.
+Kit lvl 1: petarda + **Bomba** + **Wybuchowy odskok** + **Kopniak**. Mini-specy: `docs/content/skills/bomberman/`. Liczby v0.1 / kit rebuild DRAFT: `docs/production/M84_BOMBERMAN_PLAN.md` oraz `DeployableTuning`.
 
 Receptura L2: `AllEligibleInGroup` (3 mutacje niezależne od skill-match — inna niż Pudzian). L3: `MixIndependentAndFollowup` (Saper + Piroman + 1 follow-up 1:1). L4: wszystkie 3 ulti. L5: capstone z eligibility poniżej.
 
@@ -124,7 +124,7 @@ Niezależne (zawsze w ofercie L3):
 
 | Karta | Tagi | Efekt |
 |---|---|---|
-| Saper | Trapper, Control | Po place: arm **1.00 s**, trigger r **1.60 m** (proximity). Detonator działa przed i po arm. |
+| Saper | Trapper, Control | Po place głównej bomby: arm **1.00 s**, trigger r **1.60 m** (proximity). Działa równolegle z lontem — wróg może odpalić minę wcześniej. Zwykłe podejście bez talentu **nie** detonuje. |
 | Piroman | Fire, Demolition | Ofensywne wybuchy gracza nakładają burn: **2 dmg / 0.50 s**, duration **2.00 s** (refresh, 0 stack magnitude). Tick/consume **nie** nakłada burnu (D8). |
 
 Follow-up 1:1:

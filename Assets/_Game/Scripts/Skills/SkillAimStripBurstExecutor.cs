@@ -56,7 +56,7 @@ public static class SkillAimStripBurstExecutor
 
             if (delayedPlace)
             {
-                Deployable.SpawnPlaceholder(
+                var delayed = Deployable.SpawnPlaceholder(
                     pos,
                     owner,
                     DeployableCategory.Normal,
@@ -65,6 +65,7 @@ public static class SkillAimStripBurstExecutor
                     DeployableTuning.BombBossStagger,
                     DeployableTuning.BombMaxTargets,
                     detonatable: true);
+                delayed.SetFuse(DeployableTuning.MainBombFuseSeconds);
             }
             else
             {

@@ -47,13 +47,13 @@ Kit: OPEN (M8.4 Jamie). Tożsamość „weapon-swap” jest wycofana.
 ## Bomberman
 **DRAFT** — piąta klasa playable (opcja A, canvas PO M8.4). Drugi kompletny kit testujący framework progresji (po Pudzianie). MVP nadal ma **4** tożsamości (Cwel / Pudzian / Cipak / Jamie); Bomberman jest slice poza kolejnością M8.4→M8.6.
 
-Specjalista od stawianych ładunków i detonacji.
-- setup bomb + łańcuch wybuchów,
+Specjalista od stawianych ładunków, kontroli tłumu i odskoku z ładunkiem.
+- setup bomb z automatycznym lontem + kopniak w tłum,
 - burn / homing / orbitale / nalot jako oś progresji,
-- naturalny build: Demolition + detonator,
-- off-meta: Trapper (miny) / Physics (billiard).
+- naturalny build: Demolition + Physics,
+- off-meta: Trapper (miny) / RapidFire (petarda).
 
-Kit lvl 1: petarda + Bomba + Detonator + Kopniak. Mini-specy: `docs/content/skills/bomberman/`. Progresja L2–L5: `docs/content/TALENTS.md` § Bomberman. Plan: `docs/production/M84_BOMBERMAN_PLAN.md`.
+Kit lvl 1: petarda + Bomba + Wybuchowy odskok + Kopniak. Mini-specy: `docs/content/skills/bomberman/`. Progresja L2–L5: `docs/content/TALENTS.md` § Bomberman. Plan: `docs/production/M84_BOMBERMAN_PLAN.md`.
 
 Playtest: `CombatBootstrap.usePlaytestClassOverride` na P1, klasa `playtestClassOverride` = Bomberman; domyślnie Pudzian gdy override wyłączony.
 

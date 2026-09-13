@@ -26,3 +26,9 @@ MonoBehaviour:
   goldReward: 6
   structureDamage: 0
   playerDamageMultiplier: 1
+  supportBuffRadius: 0
+  supportMoveSpeedMultiplier: 1
+  supportDamageMultiplier: 1
+  shieldProtectRadius: 0
+  visualPrefab: {fileID: 3666812843688461175, guid: 6c4cda322ede1ce41a11c7814d544945, type: 3}
+  visualOffset: {x: 0, y: -1, z: 0}

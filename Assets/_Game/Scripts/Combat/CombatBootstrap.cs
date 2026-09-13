@@ -12,6 +12,7 @@ public class CombatBootstrap : MonoBehaviour
     [SerializeField] private float playerMaxHealth = 100f;
     [SerializeField] private bool usePlaytestClassOverride;
     [SerializeField] private PlayerClassId playtestClassOverride = PlayerClassId.Bomberman;
+    [SerializeField] private GameObject bombermanVisualPrefab;
 
     public MeleeWeaponDefinition DefaultWeapon => defaultWeapon;
     public float PlayerMaxHealth => playerMaxHealth;
@@ -87,6 +88,13 @@ public class CombatBootstrap : MonoBehaviour
         EnsureSkillTelemetryOverlay();
 
         ApplyJamieVisualSlice(playerObject);
+        if (classDef != null && classDef.ClassId == PlayerClassId.Bomberman && bombermanVisualPrefab != null
+            && playerObject.GetComponentInChildren<BombermanModelView>() == null)
+        {
+            var visual = Instantiate(bombermanVisualPrefab, playerObject.transform, false);
+            visual.transform.localPosition = new Vector3(0f, -1f, 0f);
+            visual.GetComponent<BombermanModelView>()?.Initialize(playerObject);
+        }
     }
 
     private static void ConfigureSkillsForClass(GameObject playerObject, ClassDefinition classDef)
@@ -108,7 +116,7 @@ public class CombatBootstrap : MonoBehaviour
             skills.Configure(new[]
             {
                 SkillContentFactory.CreateBombermanBomba(),
-                SkillContentFactory.CreateBombermanDetonator(),
+                SkillContentFactory.CreateBombermanWybuchowyOdskok(),
                 SkillContentFactory.CreateBombermanKopniak()
             });
         }

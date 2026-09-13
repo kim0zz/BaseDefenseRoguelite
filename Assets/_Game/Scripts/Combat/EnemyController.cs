@@ -35,6 +35,8 @@ public class EnemyController : MonoBehaviour
     private float _allyDamageMul = 1f;
     private float _allyBuffRemaining;
 
+    public event System.Action Attacked;
+
     public EnemyDefinition Definition => definition;
     public EliteModifier EliteModifier => _eliteModifier;
     public AttackLineId AssignedLane => _motor != null ? _motor.AssignedLane : AttackLineId.Center;
@@ -376,6 +378,7 @@ public class EnemyController : MonoBehaviour
         }
 
         _attackCooldown = _runtimeAttackInterval;
+        Attacked?.Invoke();
     }
 
     private void TryAttackStructure(IDamageable structure)
@@ -385,6 +388,7 @@ public class EnemyController : MonoBehaviour
 
         structure.TakeDamage(definition.StructureDamage * _allyDamageMul, gameObject);
         _attackCooldown = _runtimeAttackInterval;
+        Attacked?.Invoke();
 
         if (structure is Component hit)
             StructureHitFeedback.Play(transform.position, hit.transform.position);

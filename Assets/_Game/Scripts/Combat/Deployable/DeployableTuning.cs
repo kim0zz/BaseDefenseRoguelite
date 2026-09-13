@@ -11,11 +11,25 @@ public static class DeployableTuning
     public const float BombRadius = 2.40f;
     public const float BombBossStagger = 8f;
     public const int BombMaxTargets = 8;
+    public const float MainBombFuseSeconds = 1.60f;
 
-    public const float KickSpeed = 14f;
-    public const float KickMaxDistance = 7f;
+    public const float KickSpeed = 16f;
+    public const float KickMaxDistance = 6.5f;
     public const float KickPickRange = 3.5f;
+    public const float KickCapsuleWidth = 3.40f;
+    public const float KickCapsuleLength = 3.80f;
+    public const float KickShoveSpeed = 11f;
+    public const float KickShoveDuration = 0.30f;
+    public const float ShoveDetonateRadius = 0.55f;
     public const float MultiLaunchPickRange = 4.5f;
+
+    public const float DashChargeDamage = 10f;
+    public const float DashChargeRadius = 1.80f;
+    public const float DashChargeFuseSeconds = 0.70f;
+    public const float DashChargeBossStagger = 4f;
+    public const int DashChargeMaxTargets = 6;
+    public const float DashSpeed = 20f;
+    public const float DashActiveSeconds = 0.20f;
 
     public const float SaperArmSeconds = 1.00f;
     public const float SaperTriggerRadius = 1.60f;
