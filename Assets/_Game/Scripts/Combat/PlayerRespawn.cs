@@ -113,6 +113,9 @@ public class PlayerRespawn : MonoBehaviour
 
     private Vector3 GetRespawnPosition()
     {
+        var siege = SiegeArena.Instance;
+        if (siege != null)
+            return siege.GetPlayerSpawn(_player != null ? _player.PlayerIndex : 0);
         if (BaseCore.Instance != null)
             return BaseCore.Instance.transform.position + Vector3.up;
 

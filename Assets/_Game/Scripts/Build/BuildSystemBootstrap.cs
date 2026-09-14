@@ -45,7 +45,9 @@ public class BuildSystemBootstrap : MonoBehaviour
 #endif
 
         catalog = BuildContentFactory.CreateDefaultCatalog();
-        Debug.LogWarning("[BuildSystemBootstrap] Używam runtime BuildContentFactory (brak assetu katalogu).");
+        // Runtime fallback is a supported path for prototype scenes (including
+        // Siege), so it should not look like a gameplay error in the console.
+        Debug.Log("[BuildSystemBootstrap] Używam runtime BuildContentFactory (brak assetu katalogu).");
     }
 
     public static BuildContentCatalog GetCatalogOrDefault()

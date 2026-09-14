@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9d072668cafc1b4aa58c13d3c0de3b6, type: 3}
+  m_Name: SiegeArenaConfig
+  m_EditorClassIdentifier: Assembly-CSharp::SiegeArenaConfig
+  HalfWidth: 13
+  OuterDepth: {x: -0.5, y: 16}
+  InnerDepth: {x: -14, y: 1}
+  GateZ: -2
+  GateHealth: 950
+  CoreHealth: 750
+  RetreatSeconds: 3
+  IntermissionSeconds: 8
+  CameraPadding: 1
+  CameraTilt: 65
+  CameraTransitionSpeed: 4

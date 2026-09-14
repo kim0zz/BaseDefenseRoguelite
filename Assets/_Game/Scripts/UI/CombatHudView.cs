@@ -134,6 +134,22 @@ public class CombatHudView : MonoBehaviour
         RefreshContextHints();
         RefreshOverlays();
         RefreshLevelUpOverlay();
+        ApplySiegeLayout();
+    }
+
+    private void ApplySiegeLayout()
+    {
+        if (SiegeArena.Instance == null) return;
+        // SiegeHudView owns the top chrome; preserve player rows and skill strip below it.
+        if (_topBarImage != null) _topBarImage.enabled = false;
+        _goldExpText?.gameObject.SetActive(false);
+        _flowText?.gameObject.SetActive(false);
+        _baseText?.gameObject.SetActive(false);
+        _towerText?.gameObject.SetActive(false);
+        _statusText?.gameObject.SetActive(false);
+        _bossText?.gameObject.SetActive(false);
+        _bossBarRoot?.SetActive(false);
+        if (_contextHintText != null) _contextHintText.transform.parent.gameObject.SetActive(false);
     }
 
     private void OnWaveStarted(WaveDefinition wave)

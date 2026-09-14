@@ -36,18 +36,19 @@ public static class EnemySeparation
 
             var diff = position - positions[i];
             diff.y = 0f;
-            var dist = diff.magnitude;
             var minDist = selfRadius + radii[i];
+            var distanceSquared = diff.sqrMagnitude;
 
-            if (dist < minDist)
+            if (distanceSquared < minDist * minDist)
             {
-                if (dist < 0.0001f)
+                if (distanceSquared < 0.00000001f)
                 {
                     var angle = selfIndex * 2.399963f + i * 0.7f;
                     diff = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
-                    dist = 0.0001f;
+                    distanceSquared = 0.00000001f;
                 }
 
+                var dist = Mathf.Sqrt(distanceSquared);
                 separation += diff.normalized * (minDist - dist) * strength;
             }
         }

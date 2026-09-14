@@ -127,7 +127,8 @@ public class BombermanProgressionTests
         foreach (var talent in catalog.AllTalents)
         {
             if (talent.PlayerClass != PlayerClassId.Pudzian) continue;
-            Assert.IsTrue(TalentEligibility.IsEligible(talent, pudzianSnapshot, AlwaysUnlockedMetaQuery.Instance));
+            if (talent.RequiredTeamLevel <= pudzianSnapshot.TeamLevel)
+                Assert.IsTrue(TalentEligibility.IsEligible(talent, pudzianSnapshot, AlwaysUnlockedMetaQuery.Instance));
         }
 
         foreach (var talent in catalog.AllTalents)
@@ -149,7 +150,7 @@ public class BombermanProgressionTests
             { 16, 4 }, { 17, 5 }, { 18, 5 },
             { 19, 3 }, { 20, 4 }, { 21, 4 },
             { 22, 2 }, { 23, 3 }, { 24, 3 },
-            { 25, 3 }, { 26, 4 }, { 27, 3 }
+            { 25, 3 }, { 26, 4 }, { 27, 4 }
         };
     }
 

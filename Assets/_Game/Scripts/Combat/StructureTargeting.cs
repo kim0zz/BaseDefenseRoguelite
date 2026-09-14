@@ -7,6 +7,7 @@ public static class StructureTargeting
 {
     public static IDamageable ResolveStructureTarget(AttackLineId lane, float attackRange, Vector3 fromPosition)
     {
+        if (SiegeArena.Instance != null) return SiegeArena.Instance.DefenseTarget;
         var lineTower = TowerRegistry.GetLineTower(lane);
         if (lineTower != null && lineTower.IsOperational)
             return lineTower;
@@ -25,7 +26,13 @@ public static class StructureTargeting
 
         if (target is Component component)
         {
-            var delta = component.transform.position - fromPosition;
+            var targetPosition = component.transform.position;
+            if (SiegeArena.Instance != null && component.TryGetComponent<Collider>(out var collider))
+            {
+                var query = new Vector3(fromPosition.x, collider.bounds.center.y, fromPosition.z);
+                targetPosition = collider.ClosestPoint(query);
+            }
+            var delta = targetPosition - fromPosition;
             delta.y = 0f;
             return delta.sqrMagnitude <= attackRange * attackRange;
         }

@@ -12,6 +12,8 @@ public class EnemyController : MonoBehaviour
 {
     [SerializeField] private EnemyDefinition definition;
 
+    private static PlayerCharacter[] _siegePlayers;
+    private static float _siegePlayersRefreshAt;
     private Health _health;
     private StatusEffectReceiver _status;
     private HitFlashFeedback _flash;
@@ -22,6 +24,8 @@ public class EnemyController : MonoBehaviour
     private PlayerCharacter _huntTarget;
     private IDamageable _structureTarget;
     private float _attackCooldown;
+    private float _structureWindupRemaining;
+    private IDamageable _structureWindupTarget;
     private float _retargetTimer;
     private bool _isDying;
     private bool _wasKnockbackActive;
@@ -34,10 +38,15 @@ public class EnemyController : MonoBehaviour
     private float _allyMoveMul = 1f;
     private float _allyDamageMul = 1f;
     private float _allyBuffRemaining;
+    // Support auras do not need frame-perfect refreshes.  Throttling this scan
+    // keeps a large Siege horde from doing one full registry pass per Support
+    // every rendered frame while retaining a responsive buff update cadence.
+    private float _supportAuraRefreshRemaining;
 
     public event System.Action Attacked;
 
     public EnemyDefinition Definition => definition;
+    public bool IsAlive => _health != null && _health.IsAlive && !_isDying;
     public EliteModifier EliteModifier => _eliteModifier;
     public AttackLineId AssignedLane => _motor != null ? _motor.AssignedLane : AttackLineId.Center;
 
@@ -57,6 +66,7 @@ public class EnemyController : MonoBehaviour
 
     public float AllyMoveMultiplier => _allyMoveMul;
     public float AllyDamageMultiplier => _allyDamageMul;
+    public float StructureWindupRemaining => _structureWindupRemaining;
 
     public void ApplyAllyBuff(float moveMul, float damageMul, float durationSeconds)
     {
@@ -128,8 +138,14 @@ public class EnemyController : MonoBehaviour
     private void Update()
     {
         if (_isDying || !_health.IsAlive || definition == null) return;
+        if (SiegeArena.Instance != null && Time.timeScale <= 0f) return;
         if (!RunFailRules.ShouldEnemyCombatTick(ResolveFlowState())) return;
-        if (_status != null && _status.BlocksMovement && _status.BlocksAttack) return;
+        if (_status != null && _status.BlocksMovement && _status.BlocksAttack)
+        {
+            _structureWindupRemaining = 0f;
+            _structureWindupTarget = null;
+            return;
+        }
 
         var knockbackActive = _knockback != null && _knockback.IsActive;
 
@@ -165,6 +181,12 @@ public class EnemyController : MonoBehaviour
             * _allyMoveMul
             * Time.deltaTime;
 
+        if (SiegeArena.Instance != null)
+        {
+            UpdateSiegeMovement(moveSpeed, threatActive);
+            return;
+        }
+
         if (StructureTargeting.PrefersStructureOverPlayer(definition.Kind))
         {
             if (EnemyThreatMath.IgnoresStructureWhileTaunted(definition.Kind, threatActive))
@@ -178,8 +200,29 @@ public class EnemyController : MonoBehaviour
             UpdateLaneGruntMovement(moveSpeed);
     }
 
+    private void UpdateSiegeMovement(float moveSpeed, bool threatActive)
+    {
+        // Taunt overrides all archetypes immediately, including structure attackers.
+        if (threatActive)
+        {
+            _structureWindupRemaining = 0f;
+            _structureWindupTarget = null;
+            _target = _threatState.Taunter;
+            UpdateHunterMovement(moveSpeed);
+            return;
+        }
+        if (definition.Kind == EnemyKind.Hunter ||
+            (definition.Kind == EnemyKind.Grunt && _target != null && IsPlayerInGruntRange(_target)))
+        {
+            UpdateHunterMovement(moveSpeed);
+            return;
+        }
+        UpdateStructureAttacker(moveSpeed);
+    }
+
     private bool StaysOnLane()
     {
+        if (SiegeArena.Instance != null) return false;
         return definition.Kind is EnemyKind.Grunt
             or EnemyKind.Carrier
             or EnemyKind.Support
@@ -202,6 +245,10 @@ public class EnemyController : MonoBehaviour
     {
         if (definition.Kind != EnemyKind.Support) return;
 
+        _supportAuraRefreshRemaining -= Time.deltaTime;
+        if (_supportAuraRefreshRemaining > 0f) return;
+        _supportAuraRefreshRemaining = 0.15f;
+
         var radius = definition.SupportBuffRadius;
         if (radius <= 0f) return;
 
@@ -214,9 +261,7 @@ public class EnemyController : MonoBehaviour
         {
             if (ally == null || ally == this) continue;
             if (ally.Definition == null) continue;
-
-            var allyHealth = ally.GetComponent<Health>();
-            if (allyHealth == null || !allyHealth.IsAlive) continue;
+            if (!ally.IsAlive) continue;
 
             if (!EnemySupportBuffMath.ShouldBuffAlly(
                     EnemyKind.Support,
@@ -248,7 +293,7 @@ public class EnemyController : MonoBehaviour
             }
         }
 
-        if (StructureTargeting.PrefersStructureOverPlayer(definition.Kind))
+        if (SiegeArena.Instance != null || StructureTargeting.PrefersStructureOverPlayer(definition.Kind))
             _structureTarget = StructureTargeting.ResolveStructureTarget(AssignedLane, definition.AttackRange, transform.position);
 
         if (definition.Kind == EnemyKind.Hunter)
@@ -278,6 +323,8 @@ public class EnemyController : MonoBehaviour
 
         // Straight-line steering to the tower stalls at choke corners.
         // Walk the polyline until in melee range of the structure.
+        _structureWindupRemaining = 0f;
+        _structureWindupTarget = null;
         _motor.AdvanceAlongLane(moveSpeed);
     }
 
@@ -361,6 +408,7 @@ public class EnemyController : MonoBehaviour
         if (toPlayer.sqrMagnitude > definition.DetectRange * definition.DetectRange)
             return false;
 
+        if (SiegeArena.Instance != null) return true;
         var extraLeash = _motor.LaneCorridorHalfWidthExtra();
         return _motor.IsInLaneCorridor(player.transform.position, extraLeash);
     }
@@ -386,6 +434,25 @@ public class EnemyController : MonoBehaviour
         if (_attackCooldown > 0f || (_status != null && _status.BlocksAttack)) return;
         if (structure == null || !structure.IsAlive) return;
 
+        // Burzyciel telegraphs its heavy hit for one second. Moving out of range,
+        // changing target, taunt, or stun cancels the pending strike.
+        if (definition.Kind == EnemyKind.Siege)
+        {
+            if (_structureWindupTarget != structure)
+            {
+                _structureWindupTarget = structure;
+                _structureWindupRemaining = 1f;
+                return;
+            }
+
+            _structureWindupRemaining -= Time.deltaTime;
+            if (_structureWindupRemaining > 0f || !StructureTargeting.IsStructureInRange(
+                    structure, transform.position, definition.AttackRange))
+                return;
+            _structureWindupRemaining = 0f;
+            _structureWindupTarget = null;
+        }
+
         structure.TakeDamage(definition.StructureDamage * _allyDamageMul, gameObject);
         _attackCooldown = _runtimeAttackInterval;
         Attacked?.Invoke();
@@ -396,11 +463,11 @@ public class EnemyController : MonoBehaviour
 
     private PlayerCharacter PickRandomLivingPlayer()
     {
-        var players = FindObjectsByType<PlayerCharacter>();
+        var players = GetPlayers();
         var living = new System.Collections.Generic.List<PlayerCharacter>();
         foreach (var player in players)
         {
-            if (player.IsCombatEnabled)
+            if (player != null && player.IsCombatEnabled)
                 living.Add(player);
         }
 
@@ -410,15 +477,15 @@ public class EnemyController : MonoBehaviour
 
     private PlayerCharacter FindNearestPlayerOnLane()
     {
-        var players = FindObjectsByType<PlayerCharacter>();
+        var players = GetPlayers();
         PlayerCharacter nearest = null;
         var bestDist = definition.DetectRange * definition.DetectRange;
         var extraLeash = _motor.LaneCorridorHalfWidthExtra();
 
         foreach (var player in players)
         {
-            if (!player.IsCombatEnabled) continue;
-            if (!_motor.IsInLaneCorridor(player.transform.position, extraLeash)) continue;
+            if (player == null || !player.IsCombatEnabled) continue;
+            if (SiegeArena.Instance == null && !_motor.IsInLaneCorridor(player.transform.position, extraLeash)) continue;
 
             var dist = Vector3.SqrMagnitude(player.transform.position - transform.position);
             if (dist < bestDist)
@@ -472,7 +539,7 @@ public class EnemyController : MonoBehaviour
 
     private void GrantKillRewards()
     {
-        if (definition == null) return;
+        if (definition == null || SiegeArena.Instance != null) return;
 
         var runState = SharedRunState.Instance;
         if (runState == null) return;
@@ -523,8 +590,21 @@ public class EnemyController : MonoBehaviour
             _health.Died -= OnDied;
     }
 
+    private static PlayerCharacter[] GetPlayers()
+    {
+        if (SiegeArena.Instance == null) return FindObjectsByType<PlayerCharacter>();
+        if (_siegePlayers == null || Time.unscaledTime >= _siegePlayersRefreshAt || Time.unscaledTime < _siegePlayersRefreshAt - 0.5f)
+        {
+            _siegePlayers = FindObjectsByType<PlayerCharacter>();
+            _siegePlayersRefreshAt = Time.unscaledTime + 0.5f;
+        }
+        return _siegePlayers;
+    }
+
     private static GameFlowState ResolveFlowState()
     {
+        if (SiegeArena.Instance != null)
+            return GameFlowState.WaveActive;
         var flow = FindAnyObjectByType<GameFlowManager>();
         return flow != null ? flow.State : GameFlowState.WaveActive;
     }

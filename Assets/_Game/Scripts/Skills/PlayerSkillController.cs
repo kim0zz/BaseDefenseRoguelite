@@ -134,6 +134,8 @@ public class PlayerSkillController : MonoBehaviour
         if (debugForceCrackZoneModifier && !_slotEffects[0].Contains(SkillEffectKind.SpawnSlowZone))
             _slotEffects[0].Add(SkillEffectKind.SpawnSlowZone);
 
+        GetComponent<SiegeSkillUpgrades>()?.ApplyToSlots(slots);
+
         for (var i = 0; i < SkillSlotCount; i++)
             ConfigureSlot(i, slots[i], asBaseKit: false);
 

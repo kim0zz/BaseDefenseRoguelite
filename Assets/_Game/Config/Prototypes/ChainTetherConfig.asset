@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e1410df55b46ae4b98b2b9cef5dfefe, type: 3}
+  m_Name: ChainTetherConfig
+  m_EditorClassIdentifier: 
+  baseline:
+    restLength: 4
+    softTensionStart: 5
+    hardTensionStart: 8
+    maxStretch: 12
+    slackSpring: 0
+    softSpring: 16
+    hardSpring: 40
+    damping: 9
+    maxPullAcceleration: 42
+    playerAgencyRetention: 0.4
+  shortTune:
+    restLength: 3.2
+    softTensionStart: 4
+    hardTensionStart: 6.5
+    maxStretch: 10
+    slackSpring: 0
+    softSpring: 18
+    hardSpring: 44
+    damping: 10
+    maxPullAcceleration: 44
+    playerAgencyRetention: 0.4
+  extraShort:
+    restLength: 2.6
+    softTensionStart: 3.2
+    hardTensionStart: 5.2
+    maxStretch: 8
+    slackSpring: 0
+    softSpring: 20
+    hardSpring: 48
+    damping: 11
+    maxPullAcceleration: 46
+    playerAgencyRetention: 0.38
+  defaultPreset: 2

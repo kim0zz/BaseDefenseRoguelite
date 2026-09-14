@@ -15,6 +15,9 @@ public class PlayerJoinManager : MonoBehaviour
 
     [SerializeField] private int maxPlayers = MaxSlots;
 
+    [Tooltip("Gdy true — na Start przypisuje podłączone pady do slotów P1..Pn zamiast wymuszać klawiaturę P1.")]
+    [SerializeField] private bool autoJoinConnectedGamepads;
+
     [Tooltip("Opcjonalne Transform'y punktów spawnu. Jeśli puste — używa FallbackSpawnPositions.")]
     [SerializeField] private Transform[] spawnPoints;
 
@@ -46,6 +49,12 @@ public class PlayerJoinManager : MonoBehaviour
 
     private void Start()
     {
+        if (autoJoinConnectedGamepads && TryAutoJoinConnectedGamepadsOnStart())
+        {
+            Debug.Log("[PlayerJoinManager] Auto-join padów aktywny (P1..Pn). Tab: P1 → klawiatura. South: kolejni gracze.");
+            return;
+        }
+
         if (Keyboard.current == null)
         {
             Debug.LogWarning("[PlayerJoinManager] Brak klawiatury — Player 1 nie zostanie utworzony automatycznie.");
@@ -55,6 +64,25 @@ public class PlayerJoinManager : MonoBehaviour
         SpawnPlayer(Player1Slot, PlayerInputMode.KeyboardMouse);
         Debug.Log("[PlayerJoinManager] Player 1 przypisany do klawiatury (WASD). " +
                   "P2–4: South na padzie. P1 → pad: South. P1 → klawiatura: Tab.");
+    }
+
+    private bool TryAutoJoinConnectedGamepadsOnStart()
+    {
+        var pads = new List<Gamepad>();
+        foreach (var gamepad in Gamepad.all)
+        {
+            if (gamepad != null)
+                pads.Add(gamepad);
+        }
+
+        if (pads.Count == 0)
+            return false;
+
+        var slot = 0;
+        for (var i = 0; i < pads.Count && slot < maxPlayers; i++, slot++)
+            SpawnPlayer(slot, PlayerInputMode.Gamepad, pads[i]);
+
+        return slot > 0;
     }
 
     private void Update()
@@ -174,6 +202,9 @@ public class PlayerJoinManager : MonoBehaviour
 
     private Vector3 GetSpawnPosition(int index)
     {
+        var siege = SiegeArena.Instance;
+        if (siege != null)
+            return siege.GetPlayerSpawn(index);
         if (spawnPoints != null && index < spawnPoints.Length && spawnPoints[index] != null)
             return spawnPoints[index].position;
 

@@ -93,6 +93,15 @@ public class SkillDefinition : ScriptableObject
     public float CapsuleLengthMeters => capsuleLengthMeters;
     public int MaxTargets => maxTargets;
     public float Damage => damage;
+    // Only call on a runtime clone: authored assets remain unchanged.
+    public void ApplySiegeMultipliers(float damageScale, float cooldownScale, float areaScale)
+    {
+        damage *= Mathf.Max(1f, damageScale);
+        cooldownSeconds = Mathf.Max(0.35f, cooldownSeconds * Mathf.Clamp(cooldownScale, 0.5f, 1f));
+        radiusMeters *= Mathf.Max(1f, areaScale);
+        capsuleWidthMeters *= Mathf.Max(1f, areaScale);
+        capsuleLengthMeters *= Mathf.Max(1f, areaScale);
+    }
     public SkillControlMode ControlMode => controlMode;
     public float ControlDurationSeconds => controlDurationSeconds;
     public float KnockbackForce => knockbackForce;

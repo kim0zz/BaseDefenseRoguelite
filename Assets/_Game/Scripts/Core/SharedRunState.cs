@@ -13,6 +13,9 @@ public class SharedRunState : MonoBehaviour
     private int _gold;
     private int _sharedExp;
     private int _teamLevel = 1;
+    private bool _siegeProgression;
+
+    public void ConfigureSiegeProgression(bool enabled) => _siegeProgression = enabled;
 
     public static SharedRunState Instance { get; private set; }
 
@@ -76,6 +79,7 @@ public class SharedRunState : MonoBehaviour
 
     public void AddKillRewards(int exp, int gold)
     {
+        if (_siegeProgression) return;
         _gold += Mathf.Max(0, gold);
         _sharedExp += Mathf.Max(0, exp);
         GoldChanged?.Invoke(_gold);
@@ -90,6 +94,15 @@ public class SharedRunState : MonoBehaviour
             LeveledUp?.Invoke(_teamLevel);
             Debug.Log($"[SharedRunState] Awans drużyny na poziom {_teamLevel} (EXP {_sharedExp}).");
         }
+    }
+
+    /// <summary>Nagroda gwarantowana trybu Siege; nie uruchamia klasycznej progresji kill.</summary>
+    public void AddSiegeReward(int exp, int gold)
+    {
+        _gold += Mathf.Max(0, gold);
+        _sharedExp += Mathf.Max(0, exp);
+        GoldChanged?.Invoke(_gold);
+        ExpChanged?.Invoke(_sharedExp, GetExpToNextLevel());
     }
 
     public bool TrySpendGold(int amount)

@@ -1,0 +1,437 @@
+{
+  "waves": [
+    {
+      "title": "Przed bramą",
+      "groups": [
+        {
+          "spawnInterval": 0.32,
+          "lane": 1,
+          "elite": 0,
+          "label": "Pierwszy napór",
+          "startSeconds": 3,
+          "kind": 0,
+          "count": 18,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 0.25,
+          "lane": 1,
+          "elite": 0,
+          "label": "Nadciąga horda",
+          "startSeconds": 14,
+          "kind": 0,
+          "count": 26,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 0.4,
+          "lane": 2,
+          "elite": 0,
+          "label": "Biegacze z prawej!",
+          "startSeconds": 23,
+          "kind": 2,
+          "count": 7,
+          "telegraphSeconds": 2.5
+        }
+      ],
+      "activeCap": 28,
+      "description": "Zatrzymaj tłum. Uważaj na prawy flank."
+    },
+    {
+      "title": "Szczypce",
+      "groups": [
+        {
+          "spawnInterval": 0.28,
+          "lane": 1,
+          "elite": 0,
+          "label": "Natarcie środkiem",
+          "startSeconds": 3,
+          "kind": 0,
+          "count": 25,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 0.45,
+          "lane": 0,
+          "elite": 0,
+          "label": "Lewa flanka!",
+          "startSeconds": 10,
+          "kind": 2,
+          "count": 9,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 0.28,
+          "lane": 1,
+          "elite": 0,
+          "label": "Nowa grupa środkiem",
+          "startSeconds": 22,
+          "kind": 0,
+          "count": 24,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 0.4,
+          "lane": 2,
+          "elite": 0,
+          "label": "Prawa flanka!",
+          "startSeconds": 26,
+          "kind": 2,
+          "count": 10,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 0.7,
+          "lane": 1,
+          "elite": 0,
+          "label": "Łowcy wchodzą do walki",
+          "startSeconds": 29,
+          "kind": 1,
+          "count": 4,
+          "telegraphSeconds": 2.5
+        }
+      ],
+      "activeCap": 38,
+      "description": "Środek wiąże walkę, boki próbują przemknąć."
+    },
+    {
+      "title": "Taran",
+      "groups": [
+        {
+          "spawnInterval": 0.28,
+          "lane": 1,
+          "elite": 0,
+          "label": "Eskorta burzyciela",
+          "startSeconds": 3,
+          "kind": 0,
+          "count": 28,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 1,
+          "lane": 1,
+          "elite": 0,
+          "label": "BURZYCIEL!",
+          "startSeconds": 7,
+          "kind": 4,
+          "count": 1,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 1.2,
+          "lane": 1,
+          "elite": 0,
+          "label": "Tarczownicy osłaniają szturm",
+          "startSeconds": 9,
+          "kind": 7,
+          "count": 3,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 0.4,
+          "lane": 0,
+          "elite": 0,
+          "label": "Biegacze z lewej!",
+          "startSeconds": 16,
+          "kind": 2,
+          "count": 8,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 0.28,
+          "lane": 1,
+          "elite": 0,
+          "label": "Posiłki środkiem",
+          "startSeconds": 29,
+          "kind": 0,
+          "count": 26,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 0.6,
+          "lane": 2,
+          "elite": 0,
+          "label": "Łowcy z prawej",
+          "startSeconds": 32,
+          "kind": 1,
+          "count": 5,
+          "telegraphSeconds": 2.5
+        }
+      ],
+      "activeCap": 44,
+      "description": "Burzyciel musi paść, zanim rozbije obronę."
+    },
+    {
+      "title": "Napór",
+      "groups": [
+        {
+          "spawnInterval": 0.2,
+          "lane": 1,
+          "elite": 0,
+          "label": "Duży szturm środkiem",
+          "startSeconds": 3,
+          "kind": 0,
+          "count": 35,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 0.22,
+          "lane": 0,
+          "elite": 0,
+          "label": "Lewa grupa się dołącza!",
+          "startSeconds": 8,
+          "kind": 0,
+          "count": 28,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 0.6,
+          "lane": 2,
+          "elite": 0,
+          "label": "Łowcy na placu!",
+          "startSeconds": 13,
+          "kind": 1,
+          "count": 7,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 0.22,
+          "lane": 1,
+          "elite": 0,
+          "label": "Ostatni napór",
+          "startSeconds": 34,
+          "kind": 0,
+          "count": 32,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 0.35,
+          "lane": 2,
+          "elite": 0,
+          "label": "Biegacze z prawej!",
+          "startSeconds": 37,
+          "kind": 2,
+          "count": 10,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 0.8,
+          "lane": 1,
+          "elite": 0,
+          "label": "Tarczownicy",
+          "startSeconds": 39,
+          "kind": 7,
+          "count": 4,
+          "telegraphSeconds": 2.5
+        }
+      ],
+      "activeCap": 55,
+      "description": "Wytrzymaj kulminację, potem odzyskaj plac."
+    },
+    {
+      "title": "Ostatni szturm",
+      "groups": [
+        {
+          "spawnInterval": 0.2,
+          "lane": 1,
+          "elite": 0,
+          "label": "Nadciąga ostatnia armia!",
+          "startSeconds": 4,
+          "kind": 0,
+          "count": 38,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 4,
+          "lane": 1,
+          "elite": 0,
+          "label": "BURZYCIELE!",
+          "startSeconds": 13,
+          "kind": 4,
+          "count": 2,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 0.8,
+          "lane": 1,
+          "elite": 0,
+          "label": "Pancerna eskorta",
+          "startSeconds": 15,
+          "kind": 7,
+          "count": 5,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 0.5,
+          "lane": 0,
+          "elite": 0,
+          "label": "Łowcy z lewej!",
+          "startSeconds": 21,
+          "kind": 1,
+          "count": 8,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 0.2,
+          "lane": 1,
+          "elite": 0,
+          "label": "KULMINACJA — środek!",
+          "startSeconds": 35,
+          "kind": 0,
+          "count": 28,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 0.22,
+          "lane": 0,
+          "elite": 0,
+          "label": "KULMINACJA — lewa!",
+          "startSeconds": 36,
+          "kind": 0,
+          "count": 24,
+          "telegraphSeconds": 2.5
+        },
+        {
+          "spawnInterval": 0.35,
+          "lane": 2,
+          "elite": 0,
+          "label": "KULMINACJA — prawa!",
+          "startSeconds": 37,
+          "kind": 2,
+          "count": 18,
+          "telegraphSeconds": 2.5
+        }
+      ],
+      "activeCap": 68,
+      "description": "Ostatnia horda. Wytrzymaj i wyczyść pole!"
+    }
+  ],
+  "enemies": [
+    {
+      "attackInterval": 1.6,
+      "bodyColor": {
+        "g": 0.24,
+        "b": 0.19,
+        "a": 1,
+        "r": 0.66
+      },
+      "bodyScale": {
+        "z": 0.65,
+        "x": 0.65,
+        "y": 0.8
+      },
+      "goldReward": 0,
+      "structureDamage": 3,
+      "attackRange": 1.5,
+      "damage": 4,
+      "expReward": 0,
+      "enemyKind": 0,
+      "displayName": "Najeźdźca",
+      "detectRange": 3.5,
+      "maxHealth": 14,
+      "moveSpeed": 3.4,
+      "playerDamageMultiplier": 1
+    },
+    {
+      "attackInterval": 1.5,
+      "bodyColor": {
+        "g": 0.22,
+        "b": 0.75,
+        "a": 1,
+        "r": 0.65
+      },
+      "bodyScale": {
+        "z": 0.7,
+        "x": 0.7,
+        "y": 1.0
+      },
+      "goldReward": 0,
+      "structureDamage": 3,
+      "attackRange": 1.5,
+      "damage": 5,
+      "expReward": 0,
+      "enemyKind": 1,
+      "displayName": "Łowca",
+      "detectRange": 25,
+      "maxHealth": 22,
+      "moveSpeed": 4.5,
+      "playerDamageMultiplier": 1
+    },
+    {
+      "attackInterval": 1.3,
+      "bodyColor": {
+        "g": 0.5,
+        "b": 0.15,
+        "a": 1,
+        "r": 1
+      },
+      "bodyScale": {
+        "z": 0.6,
+        "x": 0.6,
+        "y": 0.75
+      },
+      "goldReward": 0,
+      "structureDamage": 3,
+      "attackRange": 1.4,
+      "damage": 3,
+      "expReward": 0,
+      "enemyKind": 2,
+      "displayName": "Biegacz",
+      "detectRange": 25,
+      "maxHealth": 10,
+      "moveSpeed": 5.3,
+      "playerDamageMultiplier": 1
+    },
+    {
+      "attackInterval": 3.2,
+      "bodyColor": {
+        "g": 0.4,
+        "b": 0.48,
+        "a": 1,
+        "r": 0.4
+      },
+      "bodyScale": {
+        "z": 1.1,
+        "x": 1.1,
+        "y": 1.25
+      },
+      "goldReward": 0,
+      "structureDamage": 22,
+      "attackRange": 2.0,
+      "damage": 7,
+      "expReward": 0,
+      "enemyKind": 4,
+      "displayName": "Burzyciel",
+      "detectRange": 25,
+      "maxHealth": 145,
+      "moveSpeed": 1.9,
+      "playerDamageMultiplier": 0.6
+    },
+    {
+      "attackInterval": 1.8,
+      "bodyColor": {
+        "g": 0.4,
+        "b": 0.75,
+        "a": 1,
+        "r": 0.2
+      },
+      "bodyScale": {
+        "z": 0.85,
+        "x": 0.85,
+        "y": 1.05
+      },
+      "goldReward": 0,
+      "structureDamage": 4,
+      "attackRange": 1.6,
+      "damage": 5,
+      "expReward": 0,
+      "enemyKind": 7,
+      "displayName": "Tarczownik",
+      "detectRange": 25,
+      "maxHealth": 48,
+      "shieldProtectRadius": 2.2,
+      "moveSpeed": 2.5,
+      "playerDamageMultiplier": 1
+    }
+  ]
+}

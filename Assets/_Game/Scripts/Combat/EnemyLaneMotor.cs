@@ -16,9 +16,13 @@ public class EnemyLaneMotor : MonoBehaviour
     private EnemyDefinition _definition;
     private MapGreyboxBuilder _mapBuilder;
     private KnockbackReceiver _knockback;
+    private EnemyController _controller;
 
     private static readonly List<Vector3> SeparationPositions = new();
     private static readonly List<float> SeparationRadii = new();
+    private static readonly Dictionary<EnemyController, int> SiegeSeparationIndices = new();
+    private static int _siegeSeparationFrame = -1;
+    private static SiegeArena _separationArena;
 
     public AttackLineId AssignedLane => _assignedLane;
     public LanePath LanePath => _lanePath;
@@ -39,6 +43,7 @@ public class EnemyLaneMotor : MonoBehaviour
     private void Awake()
     {
         _knockback = GetComponent<KnockbackReceiver>();
+        _controller = GetComponent<EnemyController>();
     }
 
     public void RefreshLanePath()
@@ -64,6 +69,11 @@ public class EnemyLaneMotor : MonoBehaviour
 
     public void ClampToLane()
     {
+        if (SiegeArena.Instance != null)
+        {
+            transform.position = SiegeArena.Instance.ClampEnemy(transform.position);
+            return;
+        }
         var pos = transform.position;
         pos = _lanePath.ClampToCorridor(pos);
         transform.position = pos;
@@ -71,6 +81,11 @@ public class EnemyLaneMotor : MonoBehaviour
 
     public void AdvanceAlongLane(float distance)
     {
+        if (SiegeArena.Instance != null)
+        {
+            MoveDirect(SiegeArena.Instance.GetEnemyDestination(transform.position), distance);
+            return;
+        }
         var previousPos = transform.position;
         var pos = _lanePath.AdvanceAlongPath(previousPos, distance);
         pos = ApplySeparationAndReclamp(pos);
@@ -80,6 +95,11 @@ public class EnemyLaneMotor : MonoBehaviour
 
     public void MoveTowardAlongCorridor(Vector3 target, float maxDistance)
     {
+        if (SiegeArena.Instance != null)
+        {
+            MoveDirect(target, maxDistance);
+            return;
+        }
         var pos = _lanePath.MoveTowardAlongCorridor(transform.position, target, maxDistance);
         pos = ApplySeparationAndReclamp(pos);
         transform.position = pos;
@@ -101,6 +121,7 @@ public class EnemyLaneMotor : MonoBehaviour
         var step = Mathf.Min(maxDistance, dist);
         var pos = transform.position + toTarget.normalized * step;
         pos = ApplySeparation(pos, clampToLane: false);
+        if (SiegeArena.Instance != null) pos = SiegeArena.Instance.ClampEnemy(pos);
         transform.position = pos;
         FaceDirection(toTarget);
     }
@@ -112,6 +133,8 @@ public class EnemyLaneMotor : MonoBehaviour
 
     private Vector3 ApplySeparation(Vector3 position, bool clampToLane)
     {
+        if (SiegeArena.Instance != null)
+            return ApplySiegeSeparation(position);
         if (_knockback != null && _knockback.IsActive)
             return position;
 
@@ -153,6 +176,32 @@ public class EnemyLaneMotor : MonoBehaviour
             SeparationPositions.Add(enemy.transform.position);
             SeparationRadii.Add(EnemySeparation.RadiusFromBodyScale(scale));
         }
+    }
+
+    private Vector3 ApplySiegeSeparation(Vector3 position)
+    {
+        if (separationStrength <= 0f || (_knockback != null && _knockback.IsActive)) return position;
+        if (_siegeSeparationFrame != Time.frameCount || _separationArena != SiegeArena.Instance)
+        {
+            _siegeSeparationFrame = Time.frameCount;
+            _separationArena = SiegeArena.Instance;
+            SeparationPositions.Clear();
+            SeparationRadii.Clear();
+            SiegeSeparationIndices.Clear();
+            foreach (var enemy in EnemyRegistry.Active)
+            {
+                if (enemy == null || !enemy.IsAlive) continue;
+                SiegeSeparationIndices[enemy] = SeparationPositions.Count;
+                SeparationPositions.Add(enemy.transform.position);
+                var scale = enemy.Definition != null ? enemy.Definition.BodyScale : Vector3.one * 0.85f;
+                SeparationRadii.Add(EnemySeparation.RadiusFromBodyScale(scale));
+            }
+        }
+        if (_controller == null) _controller = GetComponent<EnemyController>();
+        if (_controller == null || !SiegeSeparationIndices.TryGetValue(_controller, out var index)) return position;
+        var separated = EnemySeparation.Apply(position, index, SeparationPositions, SeparationRadii, separationStrength);
+        // Bounded displacement prevents a packed spawn from explosively ejecting agents.
+        return position + Vector3.ClampMagnitude(separated - position, Time.deltaTime * 2f);
     }
 
     /// <summary>

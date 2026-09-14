@@ -208,7 +208,11 @@ public class PlayerCharacter : MonoBehaviour
             var statusSpeed = _statusReceiver != null ? _statusReceiver.MoveSpeedMultiplier : 1f;
             var move = new Vector3(moveInput.x, 0f, moveInput.y) *
                        (CurrentMoveSpeed * _attackMoveMultiplier * statusSpeed * Time.deltaTime);
-            transform.Translate(move, Space.World);
+            var cc = GetComponent<CharacterController>();
+            if (cc != null && cc.enabled)
+                cc.Move(move);
+            else
+                transform.Translate(move, Space.World);
         }
 
         ApplyFacingRotation();
